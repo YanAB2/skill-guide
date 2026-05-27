@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI案例库：为什么优秀经验需要被沉淀下来？</title>
+<style>
+  :root {
+    --accent: #e8833a;
+    --accent-deep: #c96a2a;
+    --accent-light: #fff6f0;
+    --accent-grad: linear-gradient(140deg, #f08548 0%, #e0673a 50%, #d44a3a 100%);
+    --teal: #2d9d8e;
+    --teal-light: #eafaf7;
+    --amber: #f0a050;
+    --amber-light: #fef8f0;
+    --purple: #7c5ce7;
+    --purple-light: #f7f4fe;
+    --bg: #fefaf6;
+    --card: #ffffff;
+    --text: #2d2a28;
+    --text-mid: #5c5651;
+    --text-light: #8a827a;
+    --border: #f0e8df;
+    --border-warm: #f5e4d2;
+    --shadow-sm: 0 1px 4px rgba(120,80,40,.04);
+    --shadow: 0 3px 14px rgba(120,80,40,.06), 0 1px 4px rgba(120,80,40,.03);
+    --shadow-lg: 0 8px 32px rgba(120,80,40,.08), 0 3px 10px rgba(120,80,40,.04);
+    --radius: 14px;
+    --radius-lg: 20px;
+    --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  html { background: var(--bg); }
+
+  /* ===== BODY ===== */
+  body {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:
+      radial-gradient(ellipse 100% 100% at 0% 35%, rgba(240,133,72,.04) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 80% at 100% 60%, rgba(45,157,142,.03) 0%, transparent 50%),
+      radial-gradient(circle at 50% 15%, rgba(124,92,231,.02) 0%, transparent 60%);
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.74;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 16px 24px;
+  }
+  .topbar .logo-placeholder {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 2px dashed #e0d6c8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #b8a898;
+    text-align: center;
+    line-height: 1.3;
+    margin-left: auto;
+    background: rgba(255,255,255,.6);
+    cursor: default;
+  }
+
+  /* ===== CONTAINER ===== */
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ===== HERO ===== */
+  .hero-section {
+    text-align: center;
+    padding: 16px 0 32px;
+    position: relative;
+  }
+  .hero-section .hero-emoji {
+    font-size: 48px;
+    margin-bottom: 14px;
+    display: block;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  .hero-section h1 {
+    font-size: clamp(23px,3.8vw,34px);
+    font-weight: 850;
+    letter-spacing: -.015em;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 14px;
+  }
+  .hero-section .sub {
+    font-size: 16px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .hero-section .core {
+    display: inline-block;
+    background: var(--accent-light);
+    border: 1px solid #f5d5bb;
+    border-radius: 99px;
+    padding: 7px 22px;
+    font-size: 14px;
+    color: var(--accent-deep);
+    font-weight: 600;
+  }
+
+  /* ===== DIVIDER ===== */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 0 0 8px;
+    opacity: .2;
+  }
+  .section-divider span {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .section-divider span:nth-child(2) { width: 6px; height: 6px; opacity: .7; }
+  .section-divider span:nth-child(3) { width: 4px; height: 4px; opacity: .5; }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-top: 32px;
+  }
+  .section-hd {
+    margin-bottom: 20px;
+  }
+  .section-hd .emoji-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 16px;
+    font-weight: 750;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .section-hd .desc {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+
+  /* ===== PAIN CARDS (4 scenarios) ===== */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 12px;
+  }
+  .pain-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .2s, transform .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .pain-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+  .pain-card .pc-emoji {
+    font-size: 26px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .pain-card h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .pain-card p {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+  .pain-conclusion {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    font-weight: 600;
+    padding: 12px 18px;
+    background: #fffaf6;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-warm);
+    line-height: 1.6;
+  }
+
+  /* ===== COMPARE TABLE ===== */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+  }
+  .compare-table thead th {
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    font-weight: 700;
+    padding: 12px 14px;
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: .02em;
+  }
+  .compare-table tbody td {
+    padding: 12px 14px;
+    border-top: 1px solid var(--border);
+    color: var(--text-mid);
+    line-height: 1.5;
+    background: var(--card);
+  }
+  .compare-table tbody tr:last-child td {
+    background: #fefdfb;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .compare-table .badge-cell {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+  .badge-cell.bad { color: #c0392b; }
+  .badge-cell.mid { color: var(--amber); }
+  .badge-cell.good { color: var(--teal); }
+
+  /* ===== CATEGORY CARDS ===== */
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 12px;
+  }
+  .cat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    border-left: 4px solid;
+  }
+  .cat-card:nth-child(1) { border-left-color: #ef4444; }
+  .cat-card:nth-child(2) { border-left-color: var(--amber); }
+  .cat-card:nth-child(3) { border-left-color: var(--teal); }
+  .cat-card:nth-child(4) { border-left-color: var(--purple); }
+  .cat-card:nth-child(5) { border-left-color: #3b82f6; }
+  .cat-card h3 {
+    font-size: 15px; font-weight: 700; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cat-card p {
+    font-size: 13px; color: var(--text-mid); line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .cat-card .cat-value {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--accent-deep);
+    background: var(--accent-light);
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+  .principle-box {
+    margin-top: 14px;
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #fffbf6, #fff9f2);
+    border: 1px solid #f5e0c8;
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+  .principle-box strong { color: var(--accent); }
+
+  /* ===== CODE BLOCK ===== */
+  .field-block {
+    background: #2d2a28;
+    color: #fce4c8;
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    font-size: 13px;
+    line-height: 2;
+    font-family: "SF Mono","Cascadia Code","Consolas",monospace;
+    box-shadow: var(--shadow);
+    overflow-x: auto;
+  }
+  .field-block .field {
+    color: var(--amber);
+    font-weight: 700;
+  }
+  .field-block .comment {
+    color: #9a8a7a;
+  }
+  .field-block .arrow {
+    color: var(--teal);
+  }
+  .humor-tip {
+    margin-top: 14px;
+    padding: 14px 18px;
+    background: #fffaf6;
+    border-left: 4px solid var(--amber);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+  .humor-tip::before { content: '💡 '; }
+
+  /* ===== STEPS ===== */
+  .step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .2s;
+  }
+  .step-item:hover { box-shadow: var(--shadow); }
+  .step-item .step-num {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: #fff;
+  }
+  .step-item:nth-child(1) .step-num { background: var(--teal); }
+  .step-item:nth-child(2) .step-num { background: var(--amber); }
+  .step-item:nth-child(3) .step-num { background: var(--accent); }
+  .step-item:nth-child(4) .step-num { background: var(--purple); }
+  .step-item .step-text {
+    font-size: 14px; color: var(--text-mid); line-height: 1.6;
+    flex: 1;
+  }
+  .step-item .step-text strong { color: var(--text); }
+  .tip-box {
+    margin-top: 12px;
+    padding: 14px 18px;
+    background: #fffaf7;
+    border: 1px solid var(--border-warm);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.6;
+  }
+
+  /* ===== AI MODES ===== */
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+  }
+  .mode-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 18px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .mode-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+  .mode-card .m-emoji { font-size: 30px; margin-bottom: 8px; display: block; }
+  .mode-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .mode-card p { font-size: 13px; color: var(--text-light); line-height: 1.6; }
+  .mode-conclusion {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    font-weight: 500;
+  }
+
+  /* ===== SUMMARY ===== */
+  .summary-cta {
+    background: var(--accent-grad);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    text-align: center;
+    color: #fff;
+    box-shadow: var(--shadow-lg);
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 25% 35%, rgba(255,255,255,.06) 0%, transparent 55%),
+      radial-gradient(circle at 75% 65%, rgba(255,255,255,.04) 0%, transparent 50%);
+  }
+  .summary-cta h2 { font-size: 18px; font-weight: 750; opacity: .9; margin-bottom: 14px; position: relative; z-index: 1; }
+  .summary-cta p {
+    font-size: 15px; font-weight: 600; line-height: 1.75;
+    position: relative; z-index: 1;
+    max-width: 600px; margin: 0 auto;
+  }
+
+  /* ===== TOMORROW ===== */
+  .tomorrow {
+    text-align: center;
+    margin-top: 24px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px dashed #e0d3bf;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .tomorrow::after {
+    content: '';
+    position: absolute;
+    top: -20px; left: -20px;
+    width: 80px; height: 80px;
+    background: var(--amber-light);
+    border-radius: 50%;
+    opacity: .5;
+  }
+  .tomorrow .mini-pill {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .05em;
+    padding: 3px 12px; border-radius: 99px;
+    margin-bottom: 8px;
+    position: relative; z-index: 1;
+  }
+  .tomorrow p { font-size: 14px; color: var(--text-light); font-weight: 500; position: relative; z-index: 1; }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: #c8bfb5;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .pain-grid, .cat-grid { grid-template-columns: 1fr; }
+    .mode-grid { grid-template-columns: 1fr; }
+    .step-item { flex-direction: column; gap: 8px; }
+    .hero-section { padding: 8px 0 20px; }
+    .hero-section h1 { font-size: 21px; }
+    .compare-table { font-size: 11px; }
+    .compare-table thead th, .compare-table tbody td { padding: 8px 10px; }
+    .field-block { font-size: 11px; padding: 16px; }
+  }
+  @media (min-width: 641px) and (max-width: 850px) {
+    .pain-grid, .cat-grid { grid-template-columns: 1fr; }
+    .mode-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+  <div class="logo-placeholder" title="质量管理部 LOGO 放置位">质量<br>管理部</div>
+</div>
+
+<div class="container">
+
+  <!-- ==================== HERO ==================== -->
+  <div class="hero-section">
+    <span class="hero-emoji">📦</span>
+    <h1>AI案例库：为什么优秀经验需要被沉淀下来？</h1>
+    <p class="sub">你的团队不是金鱼，别让经验只有七秒记忆</p>
+    <span class="core">没有被记录的经验，本质上等于没发生过——而你为它付了工资。</span>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 一、经验是怎么悄悄溜走的 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🔍 第一部分</div>
+      <h2 style="font-size:20px;font-weight:750;">经验是怎么悄悄溜走的？</h2>
+      <p class="desc">先来对号入座，看看以下场景在你团队里出现过几次——</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <span class="pc-emoji">🏃‍♂️</span>
+        <h3>离职带走型</h3>
+        <p>小王跳槽了，顺便带走了他三年积累的全部"肌肉记忆"。接替者小李看着屏幕发呆：这个报错以前小王怎么修的来着？</p>
+      </div>
+      <div class="pain-card">
+        <span class="pc-emoji">🤔</span>
+        <h3>遗忘稀释型</h3>
+        <p>上次这个问题花了两周才搞定，但当时太忙了没记录。半年后同样问题卷土重来，好消息是这次大家会更快地达成"需要记录"的共识。</p>
+      </div>
+      <div class="pain-card">
+        <span class="pc-emoji">🕳️</span>
+        <h3>重复踩坑型</h3>
+        <p>A 项目踩过的坑，B 项目一脸坦然地又跳了进去。没人记得 A 项目当时发生了什么，只有客户记得："你们上次也是这样说的……"</p>
+      </div>
+      <div class="pain-card">
+        <span class="pc-emoji">🏝️</span>
+        <h3>知识孤岛型</h3>
+        <p>老张是团队的"人形搜索引擎"，有问题就喊"问老张"。但老张今天休假了。而且老张下周要退休了。</p>
+      </div>
+    </div>
+    <div class="pain-conclusion">
+      这些场景有一个共性：<strong>经验被锁在了人的大脑里</strong>。而大脑这个存储介质有个众所周知的问题——它会下班、会遗忘、会离职。
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 二、什么是 AI 案例库 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">📚 第二部分</div>
+      <h2 style="font-size:20px;font-weight:750;">什么是 AI 案例库？为什么不是网盘就够了？</h2>
+      <p class="desc">很多人说："我们有个共享文件夹，里面都存着呢。"打开一看——37 个版本、命名格式千奇百怪、有些文档只有三行字。</p>
+    </div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>形态</th>
+          <th>特点</th>
+          <th>检索方式</th>
+          <th>AI 可用？</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="badge-cell bad">❌ 散落文档</td>
+          <td>存在 N 个人的本地硬盘和聊天记录里</td>
+          <td>"你还记得上次那个东西吧？"</td>
+          <td>完全不能</td>
+        </tr>
+        <tr>
+          <td class="badge-cell mid">⚠️ 共享网盘</td>
+          <td>文件夹层级比家族族谱还复杂，文件名里有 4 个不同日期版本</td>
+          <td>关键词搜索，找到算你赢</td>
+          <td>勉强，但精度低</td>
+        </tr>
+        <tr>
+          <td class="badge-cell good">✅ AI 案例库</td>
+          <td>每条案例统一结构：背景、现象、原因、方案、效果、标签</td>
+          <td>语义检索——描述问题就能匹配历史</td>
+          <td>原生可用</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px;text-align:center;font-size:14px;color:var(--text-mid);font-weight:600;">
+      网盘是<strong>仓库</strong>，AI 案例库是<strong>导航系统</strong>。仓库堆满东西找不到，跟没有仓库是一样的。
+    </p>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 三、案例库里到底放什么 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🗂️ 第三部分</div>
+      <h2 style="font-size:20px;font-weight:750;">案例库里到底放什么？</h2>
+      <p class="desc">有些团队一听到"案例库"，就开始把各种文档往里倒——会议通知、团建照片、厕所报修记录……停一下。值得沉淀的有五类内容：</p>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <h3>🔴 质量问题案例</h3>
+        <p>现象 + 根因 + 措施 + 效果</p>
+        <span class="cat-value">同类问题出现时，秒出参考方案</span>
+      </div>
+      <div class="cat-card">
+        <h3>🟠 项目复盘记录</h3>
+        <p>延期原因 + 当时怎么救的 + 结果</p>
+        <span class="cat-value">下次规划项目，少踩一半坑</span>
+      </div>
+      <div class="cat-card">
+        <h3>🟢 优秀实践总结</h3>
+        <p>谁做了什么 + 为什么有效 + 适用条件</p>
+        <span class="cat-value">好方法不再是某个人的秘密武器</span>
+      </div>
+      <div class="cat-card">
+        <h3>🟣 客户反馈案例</h3>
+        <p>投诉内容 + 处理流程 + 客户买账吗</p>
+        <span class="cat-value">服务标准有据可依，不再靠临场发挥</span>
+      </div>
+      <div class="cat-card">
+        <h3>🔵 技术决策记录</h3>
+        <p>选了什么方案 + 为什么 + 踩过哪些坑</p>
+        <span class="cat-value">后人不必重走歧路</span>
+      </div>
+    </div>
+    <div class="principle-box">
+      <strong>核心原则：</strong>不要只记"发生了什么"，要记<strong>"为什么发生"</strong>和<strong>"怎么搞定的"</strong>。前者的价值是 1，加上后面两者直接乘 10。
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 四、6 字段结构 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🪪 第四部分</div>
+      <h2 style="font-size:20px;font-weight:750;">每条案例的"身份证"：6 字段结构</h2>
+      <p class="desc">如果你希望 AI 真的能帮你用好案例库，每条案例至少要有这 6 个字段。这不是玄学，是让机器"看懂"经验的最低门槛。</p>
+    </div>
+    <div class="field-block">
+      <span class="field">标题：</span><span class="comment">一句话说清这是什么案例（别写"关于那个问题的记录"，请写"XXX模块内存泄漏导致服务中断的复盘"）</span><br><br>
+      <span class="field">背景：</span><span class="comment">什么时候、什么环节、涉及谁</span><br><br>
+      <span class="field">现象：</span><span class="comment">具体发生了什么、影响范围多大（尽量量化）</span><br><br>
+      <span class="field">原因：</span><span class="comment">直接原因 + 根本原因（别只写"疏忽大意"，<span class="arrow">→</span> 再问一句"为什么会出现疏忽？"）</span><br><br>
+      <span class="field">方案：</span><span class="comment">具体做了什么、分成几步、每步用了多久</span><br><br>
+      <span class="field">效果：</span><span class="comment">改善了多少、有没有可衡量的数字、客户满意吗</span><br><br>
+      <span class="field">标签：</span><span class="comment">3~5 个关键词，方便未来检索分类</span>
+    </div>
+    <div class="humor-tip">
+      如果你发现自己写的"原因"是<strong>"操作不规范"</strong>，请再往下挖一层——为什么操作会不规范？工具难用？培训不足？流程本身有问题？一次挖不到根因，你的案例库就会变成"操作不规范全集"。
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 五、四步搭建路线图 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🛠️ 第五部分</div>
+      <h2 style="font-size:20px;font-weight:750;">从零搭建的四步路线图</h2>
+      <p class="desc">很多人不建案例库的理由是："案例还不够多，等攒多了再来。"——这就像说"等我瘦了再去健身房"。</p>
+    </div>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>先录入 1 条。</strong>找一个最近刚处理完、记录还算完整的问题，按 6 字段填进去。就一条，今天的事。
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>累积到 10 条。</strong>用同一套模板录完 10 条典型事件。这时候你已经有能力判断这套格式是否适配你们的实际场景。
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>建流程。</strong>定一条规矩：每次问题关闭后，24 小时内完成案例录入。把它变成闭环里不可跳过的一步，而不是"有空再做"。
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>接入 AI。</strong>案例库结构统一后，接入 AI Skill 做三件事：自动匹配历史案例、批量分析高频问题、生成预警报告。
+        </div>
+      </div>
+    </div>
+    <div class="tip-box">
+      <strong>避坑真理：</strong>不要追求完美开局。10 条高质量案例比 100 条糊弄了事的记录有用一百倍。
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 六、AI+案例库能做什么 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🚀 第六部分</div>
+      <h2 style="font-size:20px;font-weight:750;">案例库 + AI 能做什么？</h2>
+      <p class="desc">案例库单独存在是一个安静的档案室。接入 AI 之后，它变成了主动参与决策的军师。</p>
+    </div>
+    <div class="mode-grid">
+      <div class="mode-card">
+        <span class="m-emoji">🔍</span>
+        <h3>智能检索</h3>
+        <p>描述问题，AI 自动匹配最相似的 3 个历史案例，附带解决方案和实际效果。不用再"问老张"。</p>
+      </div>
+      <div class="mode-card">
+        <span class="m-emoji">📊</span>
+        <h3>趋势预警</h3>
+        <p>AI 定期扫描案例库，发现"最近三个月内存泄漏问题涨了三倍"，自动推送预警。你比问题更先一步知道问题在靠近。</p>
+      </div>
+      <div class="mode-card">
+        <span class="m-emoji">🎯</span>
+        <h3>辅助决策</h3>
+        <p>遇到新场景，AI 综合历史数据推荐参考策略，标注成功率、副作用和避坑提示。</p>
+      </div>
+    </div>
+    <p class="mode-conclusion">
+      本质上，案例库是在帮你的团队<strong>"记住未来"</strong>——你无法预知会遇到什么问题，但你可以确保遇到问题时<strong>有历史可查</strong>。
+    </p>
+  </div>
+
+  <!-- ==================== SUMMARY ==================== -->
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>优秀经验本身不值钱——每个人都有经验。值钱的是被<strong>结构化记录</strong>、<strong>标准化组织</strong>、<strong>AI 化调用</strong>的经验。不是把经历存下来，而是把经历变成下次行动的参考坐标。</p>
+  </div>
+
+  <!-- ==================== TOMORROW ==================== -->
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>AI应用为什么需要标准模板</p>
+  </div>
+
+</div><!-- .container -->
+
+<footer class="footer">AI 案例库指南 · 质量管理部</footer>
+
+</body>
+</html>
