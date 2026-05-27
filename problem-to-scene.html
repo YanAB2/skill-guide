@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从一个问题到一个 AI 应用场景，中间差了什么？</title>
+<style>
+  :root {
+    --warm-bg: #fefaf6;
+    --warm-card: #ffffff;
+    --warm-accent: #e8833a;
+    --warm-accent-light: #fff3ea;
+    --warm-accent-grad: linear-gradient(140deg, #f08548 0%, #e0673a 50%, #d44a3a 100%);
+    --warm-amber: #f0a050;
+    --warm-amber-light: #fef7ef;
+    --warm-teal: #2d9d8e;
+    --warm-teal-light: #eafaf7;
+    --warm-rose: #e0556a;
+    --warm-rose-light: #fef4f5;
+    --text: #2d2a28;
+    --text-mid: #5c5651;
+    --text-light: #8a827a;
+    --border: #f0e8df;
+    --border-warm: #f5e4d2;
+    --shadow-sm: 0 1px 4px rgba(120,80,40,.04);
+    --shadow: 0 3px 14px rgba(120,80,40,.06), 0 1px 4px rgba(120,80,40,.03);
+    --shadow-lg: 0 8px 32px rgba(120,80,40,.08), 0 3px 10px rgba(120,80,40,.04);
+    --radius: 14px;
+    --radius-lg: 20px;
+    --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  html { background: var(--warm-bg); }
+
+  body {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:
+      radial-gradient(ellipse 100% 100% at 0% 30%, rgba(240,133,72,.03) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 80% at 100% 65%, rgba(240,160,80,.03) 0%, transparent 50%),
+      radial-gradient(circle at 50% 10%, rgba(45,157,142,.02) 0%, transparent 60%);
+    background-color: var(--warm-bg);
+    color: var(--text);
+    line-height: 1.74;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px 24px;
+  }
+  .topbar .logo-placeholder {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 2px dashed #e0d6c8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #b8a898;
+    text-align: center;
+    line-height: 1.3;
+    margin-left: auto;
+    background: rgba(255,255,255,.6);
+    cursor: default;
+  }
+
+  /* ===== CONTAINER ===== */
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ===== HERO ===== */
+  .hero-section {
+    text-align: center;
+    padding: 24px 0 36px;
+  }
+  .hero-section .puzzle-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .hero-section h1 {
+    font-size: clamp(24px,4vw,34px);
+    font-weight: 800;
+    letter-spacing: -.015em;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 14px;
+  }
+  .hero-section .intro-text {
+    font-size: 15px;
+    color: var(--text-mid);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.8;
+  }
+
+  /* ===== SECTION HEADER ===== */
+  .section {
+    margin-top: 36px;
+  }
+  .section-hd {
+    margin-bottom: 20px;
+  }
+  .section-hd .label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    color: var(--warm-accent);
+    margin-bottom: 6px;
+  }
+  .section-hd h2 {
+    font-size: clamp(19px,2.5vw,23px);
+    font-weight: 750;
+    letter-spacing: -.01em;
+  }
+  .section-hd .desc {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+
+  /* ===== PROBLEM LIST ===== */
+  .problem-list {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+  }
+  .problem-item {
+    background: var(--warm-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--text-mid);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    line-height: 1.5;
+  }
+  .problem-item .dot {
+    flex-shrink: 0;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--warm-accent);
+    margin-top: 7px;
+    opacity: .6;
+  }
+
+  /* ===== THREE PILLARS ===== */
+  .pillar-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+  }
+  .pillar-card {
+    background: var(--warm-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 18px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .25s, transform .25s;
+  }
+  .pillar-card:hover {
+    box-shadow: var(--shadow);
+    transform: translateY(-1px);
+  }
+  .pillar-card .p-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin: 0 auto 10px;
+  }
+  .pillar-card .p-icon.amber { background: var(--warm-amber-light); }
+  .pillar-card .p-icon.teal { background: var(--warm-teal-light); }
+  .pillar-card .p-icon.rose { background: var(--warm-rose-light); }
+  .pillar-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .pillar-card p { font-size: 13px; color: var(--text-light); line-height: 1.55; }
+
+  /* ===== FIVE ITEMS ===== */
+  .item-card {
+    background: var(--warm-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 14px;
+    transition: box-shadow .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .item-card:hover { box-shadow: var(--shadow); }
+  .item-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    border-radius: 4px 0 0 4px;
+  }
+  .item-card:nth-child(1)::before { background: var(--warm-accent); }
+  .item-card:nth-child(2)::before { background: var(--warm-amber); }
+  .item-card:nth-child(3)::before { background: var(--warm-teal); }
+  .item-card:nth-child(4)::before { background: #6c63ff; }
+  .item-card:nth-child(5)::before { background: var(--warm-rose); }
+  .item-card:last-child { margin-bottom: 0; }
+  .item-card .item-hd {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .item-card .item-num {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .item-card .item-num.c1 { background: var(--warm-accent); }
+  .item-card .item-num.c2 { background: var(--warm-amber); }
+  .item-card .item-num.c3 { background: var(--warm-teal); }
+  .item-card .item-num.c4 { background: #6c63ff; }
+  .item-card .item-num.c5 { background: var(--warm-rose); }
+  .item-card .item-hd h3 { font-size: 16px; font-weight: 700; }
+  .item-card .item-body { font-size: 14px; color: var(--text-mid); line-height: 1.75; }
+  .item-card .before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .item-card .ba {
+    background: #faf9f7;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+  }
+  .item-card .ba .ba-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+  .item-card .ba .ba-tag.problem { background: #fef2f2; color: #c0392b; }
+  .item-card .ba .ba-tag.scene { background: #eafaf7; color: #1a7d6e; }
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .tag-list .tag {
+    background: var(--warm-amber-light);
+    color: #8a6010;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 5px;
+    border: 1px solid #f5deb3;
+  }
+
+  /* ===== FORMULA BOX ===== */
+  .formula-box {
+    background: linear-gradient(150deg, #fff9f3 0%, #fff5ec 100%);
+    border: 1px solid #f5e0c8;
+    border-radius: var(--radius-lg);
+    padding: 28px 30px;
+    text-align: center;
+  }
+  .formula-box .eq-line {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .formula-box .eq-line .hi {
+    display: inline-block;
+    background: var(--warm-accent-light);
+    color: var(--warm-accent);
+    padding: 2px 10px;
+    border-radius: 5px;
+    font-weight: 750;
+  }
+  .formula-box .summary-line {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--text-mid);
+    border-top: 1px dashed #f0ddd0;
+    padding-top: 14px;
+  }
+
+  /* ===== TEMPLATE BLOCK ===== */
+  .template-block {
+    background: var(--warm-card);
+    border: 2px solid var(--warm-accent);
+    border-radius: var(--radius-lg);
+    padding: 28px 30px;
+    box-shadow: var(--shadow);
+  }
+  .template-block h3 {
+    font-size: 17px; font-weight: 750;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .template-fill {
+    background: #fdfaf7;
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    font-size: 14px;
+    line-height: 2.2;
+    color: var(--text-mid);
+    border: 1px solid var(--border);
+  }
+  .template-fill .blank {
+    display: inline-block;
+    background: var(--warm-amber-light);
+    color: var(--warm-accent);
+    font-weight: 700;
+    padding: 1px 8px;
+    border-radius: 4px;
+    border-bottom: 2px solid var(--warm-amber);
+  }
+  .demo-box {
+    margin-top: 18px;
+    background: linear-gradient(150deg, #f6fdfb 0%, #fafcf8 100%);
+    border: 1px solid #c5e8de;
+    border-radius: var(--radius-sm);
+    padding: 20px 22px;
+  }
+  .demo-box .demo-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    color: var(--warm-teal);
+    background: var(--warm-teal-light);
+    padding: 3px 10px;
+    border-radius: 5px;
+    margin-bottom: 12px;
+  }
+  .demo-box p {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.85;
+  }
+
+  /* ===== SUMMARY ===== */
+  .summary-cta {
+    background: var(--warm-accent-grad);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    text-align: center;
+    color: #fff;
+    box-shadow: var(--shadow-lg);
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 25% 35%, rgba(255,255,255,.06) 0%, transparent 55%),
+      radial-gradient(circle at 75% 65%, rgba(255,255,255,.04) 0%, transparent 50%);
+  }
+  .summary-cta h2 { font-size: 18px; font-weight: 750; opacity: .9; margin-bottom: 14px; position: relative; z-index: 1; }
+  .summary-cta p {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.75;
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* ===== TOMORROW ===== */
+  .tomorrow {
+    text-align: center;
+    margin-top: 24px;
+    padding: 24px;
+    background: var(--warm-card);
+    border: 1px dashed #e0d3bf;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .tomorrow::after {
+    content: '';
+    position: absolute;
+    top: -20px; left: -20px;
+    width:  80px; height: 80px;
+    background: var(--warm-amber-light);
+    border-radius: 50%;
+    opacity: .5;
+  }
+  .tomorrow .mini-pill {
+    display: inline-block;
+    background: var(--warm-accent-light);
+    color: var(--warm-accent);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .05em;
+    padding: 3px 12px; border-radius: 99px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .tomorrow p { font-size: 14px; color: var(--text-light); font-weight: 500; position: relative; z-index: 1; }
+
+  .footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: #c8bfb5;
+  }
+
+  .section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 10px 0 0;
+    opacity: .2;
+  }
+  .section-divider span {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--warm-accent);
+  }
+  .section-divider span:nth-child(2) { width: 6px; height: 6px; opacity: .7; }
+  .section-divider span:nth-child(3) { width: 4px; height: 4px; opacity: .5; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .pillar-grid { grid-template-columns: 1fr; }
+    .problem-list { grid-template-columns: 1fr; }
+    .item-card .before-after { grid-template-columns: 1fr; }
+    .hero-section { padding: 12px 0 24px; }
+    .hero-section h1 { font-size: 22px; }
+    .template-fill { font-size: 13px; line-height: 2; }
+  }
+  @media (min-width: 641px) and (max-width: 850px) {
+    .pillar-grid { grid-template-columns: repeat(2,1fr); }
+    .problem-list { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+  <div class="logo-placeholder" title="质量管理部 LOGO 放置位">质量<br>管理部</div>
+</div>
+
+<div class="container">
+
+  <!-- ==================== HERO ==================== -->
+  <div class="hero-section">
+    <span class="puzzle-icon">🧩</span>
+    <h1>从一个问题到一个 AI 应用场景<br>中间差了什么？</h1>
+    <div class="intro-text">
+      <p>很多人常会思考：<br>"这件事能不能用 AI 解决？""这类问题可以交给 AI 处理吗？""现有流程能否实现自动化？"</p>
+      <p style="margin-top:10px;">但<strong>问题本身，并不等同于成熟的 AI 应用场景</strong>。问题只是起点，想要真正落地使用，还需要完成拆解、定义与系统化设计。</p>
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 一、问题 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">🌟 第一部分</div>
+      <h2>问题：只发现了"痛点与不便"</h2>
+      <p class="desc">日常工作里的各类困扰，本质都是原始问题。这类表述仅指出"哪里不够便利"，描述较为笼统，没有明确界定 AI 的具体工作内容，无法直接落地使用。</p>
+    </div>
+    <div class="problem-list">
+      <div class="problem-item"><span class="dot"></span>资料数量繁多，查找翻阅效率低</div>
+      <div class="problem-item"><span class="dot"></span>会议内容冗长，手动整理纪要耗时久</div>
+      <div class="problem-item"><span class="dot"></span>质量问题记录分散，复盘分析难度大</div>
+      <div class="problem-item"><span class="dot"></span>项目风险信息零散，汇总推送不及时</div>
+      <div class="problem-item"><span class="dot"></span>每周重复编写周报，机械工作量大</div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 二、场景 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">💡 第二部分</div>
+      <h2>场景：明确"人、时机、任务"</h2>
+      <p class="desc">合格的 AI 应用场景，需要把模糊问题具象化，至少理清三个核心要素。把以上三点梳理清楚，零散的问题才算初步转化为可用的应用场景。</p>
+    </div>
+    <div class="pillar-grid">
+      <div class="pillar-card">
+        <div class="p-icon amber">👤</div>
+        <h3>谁来使用</h3>
+        <p>项目质量工程师、测试人员、管理人员或是普通办公人员</p>
+      </div>
+      <div class="pillar-card">
+        <div class="p-icon teal">⏱️</div>
+        <h3>使用时机</h3>
+        <p>撰写周报时、会议结束后、问题复盘阶段、风险汇总环节等</p>
+      </div>
+      <div class="pillar-card">
+        <div class="p-icon rose">🤖</div>
+        <h3>AI 要做什么</h3>
+        <p>提炼内容、梳理风险、生成报告、匹配案例、拟定执行方案等</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 三、从问题到场景 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">📋 第三部分</div>
+      <h2>从问题到场景，关键补齐五项内容</h2>
+    </div>
+
+    <!-- 3.1 -->
+    <div class="item-card">
+      <div class="item-hd">
+        <div class="item-num c1">1</div>
+        <h3>明确核心目标</h3>
+      </div>
+      <div class="item-body">
+        <p>目标越细化，AI 执行方向越清晰。</p>
+        <div class="before-after">
+          <div class="ba">
+            <span class="ba-tag problem">笼统问题</span>
+            <p>周报编写耗费大量时间</p>
+          </div>
+          <div class="ba">
+            <span class="ba-tag scene">落地场景</span>
+            <p>每周五，项目质量工程师提交本周进度、风险及问题闭环信息，由 AI 自动生成质量周报初稿。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3.2 -->
+    <div class="item-card">
+      <div class="item-hd">
+        <div class="item-num c2">2</div>
+        <h3>稳定信息输入</h3>
+      </div>
+      <div class="item-body">
+        <p>提前确定 AI 可获取的全部资料来源，保障基础数据统一。输入保持稳定，AI 输出结果才能稳定可靠。</p>
+        <div class="tag-list">
+          <span class="tag">项目进度</span>
+          <span class="tag">问题记录</span>
+          <span class="tag">风险清单</span>
+          <span class="tag">会议纪要</span>
+          <span class="tag">测试数据</span>
+          <span class="tag">历史报告</span>
+          <span class="tag">质量标准</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3.3 -->
+    <div class="item-card">
+      <div class="item-hd">
+        <div class="item-num c3">3</div>
+        <h3>标准执行流程</h3>
+      </div>
+      <div class="item-body">
+        <p>不能依靠 AI 自由发挥，必须划定完整处理步骤。流程规范化，AI 才能像固定助手一样稳定履职。</p>
+        <div class="tag-list">
+          <span class="tag">读取资料</span>
+          <span class="tag">→</span>
+          <span class="tag">提取核心信息</span>
+          <span class="tag">→</span>
+          <span class="tag">甄别潜在风险</span>
+          <span class="tag">→</span>
+          <span class="tag">分类整合内容</span>
+          <span class="tag">→</span>
+          <span class="tag">依照模板输出</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3.4 -->
+    <div class="item-card">
+      <div class="item-hd">
+        <div class="item-num c4">4</div>
+        <h3>固定交付输出</h3>
+      </div>
+      <div class="item-body">
+        <p>落地场景必须定义清晰的最终成果。有明确输出物，才能判定场景具备实际使用价值。</p>
+        <div class="tag-list">
+          <span class="tag">生成标准周报</span>
+          <span class="tag">梳理风险清单</span>
+          <span class="tag">输出复盘报告</span>
+          <span class="tag">草拟邮件内容</span>
+          <span class="tag">整理会议纪要</span>
+          <span class="tag">制作问题跟进表</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3.5 -->
+    <div class="item-card">
+      <div class="item-hd">
+        <div class="item-num c5">5</div>
+        <h3>客观验证标准</h3>
+      </div>
+      <div class="item-body">
+        <p>不靠主观感受评判效果，建立可落地的检验规则。依托验证标准，才能持续优化 AI 应用效果。</p>
+        <div class="tag-list">
+          <span class="tag">内容是否完整</span>
+          <span class="tag">分类是否准确</span>
+          <span class="tag">格式是否合规</span>
+          <span class="tag">是否缩减人工时长</span>
+          <span class="tag">能否支撑决策</span>
+          <span class="tag">人工二次修改量</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 四、判断公式 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">🔧 第四部分</div>
+      <h2>简易判断公式</h2>
+    </div>
+    <div class="formula-box">
+      <p class="eq-line">
+        <span class="hi">问题</span> = 描述工作中遇到的麻烦与困扰
+      </p>
+      <p class="eq-line" style="margin-top:10px;">
+        <span class="hi">AI 应用场景</span> = 在指定工作环节中，AI 依托固定输入、遵循标准流程、产出可复用成果
+      </p>
+      <p class="summary-line">
+        从问题到 AI 场景，需要补齐<strong>目标、输入、流程、输出、验证</strong>五大板块
+      </p>
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 五、转化模板 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">📌 第五部分</div>
+      <h2>通用转化模板</h2>
+      <p class="desc">套用模板，即可快速将问题转化为标准 AI 场景</p>
+    </div>
+    <div class="template-block">
+      <h3>模板框架</h3>
+      <div class="template-fill">
+        我希望在<span class="blank">【具体工作环节】</span>中，<br>
+        由<span class="blank">【使用对象】</span>提供<span class="blank">【输入资料】</span>，<br>
+        让 AI 按照<span class="blank">【处理流程】</span>，<br>
+        生成<span class="blank">【输出结果】</span>，<br>
+        并通过<span class="blank">【评价标准】</span>判断效果。
+      </div>
+
+      <div class="demo-box">
+        <span class="demo-label">示范案例</span>
+        <p>
+          我希望在<strong>项目周报编写环节</strong>中，<br>
+          由<strong>项目质量工程师</strong>提供本周项目进展、风险项和问题闭环信息，<br>
+          让 AI 按照<strong>"提取重点 → 识别风险 → 整理计划 → 生成周报"</strong>的流程，<br>
+          输出一份<strong>质量周报初稿</strong>，<br>
+          并通过<strong>内容完整性、格式规范性和人工修改量</strong>来判断效果。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUMMARY ==================== -->
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>从单一问题到落地的 AI 应用场景，不在于是否会使用 AI，而在于能否将问题拆解为<strong>目标明确、输入稳定、流程清晰、输出固定、可落地验证</strong>的标准化任务。</p>
+  </div>
+
+  <!-- ==================== TOMORROW ==================== -->
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>AI 案例库：为什么优秀经验需要被沉淀下来？</p>
+    <p style="font-size:12px;color:#c8bfb5;margin-top:6px;">每日 AI 趣味小知识持续更新，解锁更多 AI 实用干货～</p>
+  </div>
+
+</div><!-- .container -->
+
+<footer class="footer">AI 场景化指南 · 质量管理部</footer>
+
+</body>
+</html>
