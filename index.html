@@ -3,367 +3,857 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>如何开发属于自己的 Skill？</title>
+<title>如何开发属于自己的 Skill？从零搭建 AI 专属能力</title>
 <style>
   :root {
-    --accent: #4f46e5;
-    --accent-light: #eef2ff;
-    --accent-grad: linear-gradient(135deg, #4f46e5, #7c3aed);
-    --accent-grad-h: linear-gradient(135deg, #4338ca, #6d28d9);
-    --bg: #f5f6fb;
-    --card: #fff;
-    --text: #1a1a2e;
-    --t2: #5b5f7b;
-    --border: #e2e5f0;
-    --shadow: 0 2px 8px rgba(0,0,0,.05), 0 1px 3px rgba(0,0,0,.03);
-    --radius: 12px;
+    --accent: #5b5fe3;
+    --accent-deep: #3b3fd0;
+    --accent-light: #ecedff;
+    --accent-grad: linear-gradient(140deg, #5b5fe3 0%, #8b5cf6 50%, #a78bfa 100%);
+    --warm: #f59e0b;
+    --warm-light: #fffbeb;
+    --bg: #fafbfd;
+    --card: #ffffff;
+    --text: #1e1e2f;
+    --text-mid: #484860;
+    --text-light: #6f708a;
+    --border: #e8e9f2;
+    --border-light: #f0f1f8;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.04);
+    --shadow: 0 2px 12px rgba(0,0,0,.05), 0 1px 4px rgba(0,0,0,.03);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,.07), 0 2px 8px rgba(0,0,0,.04);
+    --shadow-xl: 0 20px 60px rgba(0,0,0,.1), 0 8px 20px rgba(0,0,0,.05);
+    --radius: 16px;
+    --radius-lg: 24px;
+    --radius-sm: 10px;
   }
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.65;
+    line-height: 1.72;
     -webkit-font-smoothing: antialiased;
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 32px 20px 40px;
+    overflow-x: hidden;
   }
 
-  /* ===== Hero ===== */
-  .hero {
+  /* ============ HERO ============ */
+  .hero-wrap {
     background: var(--accent-grad);
-    color: #fff;
-    border-radius: 20px;
-    padding: 40px 36px;
-    text-align: center;
     position: relative;
     overflow: hidden;
-    margin-bottom: 28px;
+    padding: 64px 24px 80px;
   }
-  .hero::after {
+  .hero-wrap::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 25% 50%, rgba(255,255,255,.07) 0%, transparent 55%),
-                radial-gradient(circle at 75% 30%, rgba(255,255,255,.05) 0%, transparent 50%);
+    background:
+      radial-gradient(ellipse 80% 80% at 20% 50%, rgba(255,255,255,.06) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 60% at 80% 20%, rgba(255,255,255,.04) 0%, transparent 55%);
   }
-  .hero h1 { font-size: clamp(24px,3.5vw,36px); font-weight:800; letter-spacing:-.015em; position:relative; z-index:1; }
-  .hero .sub {
-    font-size: 16px; opacity: .8; margin: 6px 0 14px; position:relative; z-index:1;
+  /* Decorative dots */
+  .hero-dots {
+    position: absolute;
+    top: 20%; left: 5%;
+    width: 120px; height: 120px;
+    background-image: radial-gradient(rgba(255,255,255,.12) 1.5px, transparent 1.5px);
+    background-size: 20px 20px;
   }
-  .hero .tag {
+  .hero-dots.d2 {
+    top: auto; left: auto;
+    bottom: 15%; right: 5%;
+    width: 80px; height: 80px;
+    background-size: 14px 14px;
+  }
+  .hero {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+  }
+  .hero .eyebrow {
     display: inline-block;
-    background: rgba(255,255,255,.14);
-    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.2);
     border-radius: 99px;
-    padding: 6px 20px;
+    padding: 6px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    margin-bottom: 20px;
+    backdrop-filter: blur(6px);
+  }
+  .hero h1 {
+    font-size: clamp(28px,5vw,46px);
+    font-weight: 850;
+    letter-spacing: -.02em;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .hero .sub {
+    font-size: clamp(15px,2vw,18px);
+    opacity: .82;
+    margin-bottom: 20px;
+  }
+  .hero .tagline {
+    display: inline-block;
+    background: rgba(255,255,255,.11);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 99px;
+    padding: 8px 24px;
     font-size: 14px;
-    position: relative; z-index: 1;
+    backdrop-filter: blur(6px);
   }
 
-  /* ===== Core formula (merged into hero area) ===== */
-  .core {
+  /* ============ CONTAINER ============ */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ============ CONCEPT BAR ============ */
+  .concept-bar {
+    max-width: 820px;
+    margin: -36px auto 0;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 20px 28px;
-    margin-bottom: 28px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    padding: 28px 36px;
+    position: relative;
+    z-index: 10;
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     flex-wrap: wrap;
   }
-  .core .badge {
+  .concept-bar .pill {
     background: var(--accent-light);
-    color: var(--accent);
-    font-weight: 700;
+    color: var(--accent-deep);
+    font-weight: 750;
     font-size: 12px;
-    letter-spacing: .06em;
-    padding: 4px 12px;
-    border-radius: 6px;
+    letter-spacing: .05em;
+    padding: 5px 14px;
+    border-radius: 8px;
     white-space: nowrap;
   }
-  .core .eq {
-    font-size: clamp(17px, 2vw, 20px);
-    font-weight: 700;
+  .concept-bar .eq {
+    font-size: clamp(18px,2.2vw,22px);
+    font-weight: 750;
     letter-spacing: .01em;
+    background: linear-gradient(140deg, var(--accent-deep), #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  .core .note { color: var(--t2); font-size: 14px; }
-
-  /* ===== Section title ===== */
-  .sec-title {
-    text-align: center;
-    margin: 0 0 24px;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    justify-content: center;
-  }
-  .sec-title::before, .sec-title::after {
-    content: '';
-    height: 1px;
+  .concept-bar .desc {
+    color: var(--text-light);
+    font-size: 15px;
     flex: 1;
-    background: var(--border);
-    max-width: 80px;
+    min-width: 200px;
   }
 
-  /* ===== 3-column step cards ===== */
-  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+  /* ============ SECTION HEADERS ============ */
+  .section {
+    margin-top: 48px;
+  }
+  .section-hd {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .section-hd .label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .section-hd h2 {
+    font-size: clamp(21px,3vw,27px);
+    font-weight: 750;
+    letter-spacing: -.01em;
+  }
+  .section-hd p {
+    margin-top: 8px;
+    color: var(--text-light);
+    font-size: 15px;
+    max-width: 560px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-  .card {
+  /* ============ WHY SECTION ============ */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 16px;
+  }
+  .pain-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 22px 18px;
-    box-shadow: var(--shadow);
-    transition: box-shadow .2s, transform .2s;
+    padding: 28px 22px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .25s, transform .25s;
   }
-  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); transform: translateY(-1px); }
-  .card .num {
-    display: inline-flex;
-    align-items: center; justify-content: center;
-    width: 30px; height: 30px;
-    border-radius: 9px;
+  .pain-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+  .pain-card .icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 14px;
+  }
+  .pain-card .icon.red { background: #fef2f2; }
+  .pain-card .icon.amber { background: #fffbeb; }
+  .pain-card .icon.blue { background: #eff6ff; }
+  .pain-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+  .pain-card p { font-size: 13px; color: var(--text-light); line-height: 1.6; }
+
+  /* ============ STEPS TIMELINE ============ */
+  .timeline {
+    position: relative;
+    padding-left: 52px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 23px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent) 0%, #c4b5fd 100%);
+    border-radius: 1px;
+  }
+  .step {
+    position: relative;
+    margin-bottom: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .25s, transform .25s;
+  }
+  .step:hover {
+    box-shadow: var(--shadow);
+    transform: translateX(2px);
+  }
+  .step:last-child { margin-bottom: 0; }
+  .step .marker {
+    position: absolute;
+    left: -38px;
+    top: 28px;
+    width: 32px; height: 32px;
+    border-radius: 10px;
     background: var(--accent-grad);
     color: #fff;
     font-weight: 800;
-    font-size: 15px;
-    margin-bottom: 10px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(91,95,227,.35);
+    z-index: 2;
   }
-  .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
-  .card ul {
-    list-style: none; font-size: 13px; color: var(--t2); line-height: 1.8;
+  .step.step-alt .marker {
+    background: linear-gradient(140deg, #f59e0b, #f97316);
+    box-shadow: 0 4px 12px rgba(245,158,11,.35);
   }
-  .card ul li::before { content: '•'; margin-right: 6px; color: var(--accent); font-weight: 700; }
-  .card .hl {
-    margin-top: 10px;
-    display: inline-block;
-    background: #fffbf0;
-    border: 1px solid #fde68a;
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-size: 12px;
-    color: #92400e;
-    font-weight: 500;
-    line-height: 1.4;
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
   }
-
-  /* ===== Step 5: template flow ===== */
-  .flow-wrap {
-    margin-top: 10px;
+  .step-header .step-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+  .step-header h3 { font-size: 18px; font-weight: 750; letter-spacing: -.01em; }
+  .step-body {
+    color: var(--text-mid);
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .step-body .points {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .step-body .points li {
+    padding-left: 18px;
+    position: relative;
+  }
+  .step-body .points li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 10px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .step-body .points li.key::before { background: var(--warm); }
+  .step-body strong { color: var(--text); }
+  .step .tag-block {
+    margin-top: 14px;
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    align-items: center;
+    gap: 8px;
   }
-  .flow-chip {
-    background: var(--accent-light);
-    color: var(--accent);
+  .step .tag-block .tag {
+    background: var(--warm-light);
+    color: #92400e;
+    font-size: 12px;
     font-weight: 600;
-    font-size: 11px;
-    padding: 4px 10px;
-    border-radius: 5px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid #fde68a;
+  }
+  .step .tag-block .tag.accent {
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    border-color: #ddd6fe;
+  }
+
+  /* Flow in step 5 */
+  .workflow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    background: #f8f9fd;
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-top: 10px;
+  }
+  .workflow .chip {
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    font-weight: 650;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 7px;
     white-space: nowrap;
   }
-  .flow-arr { color: #c4b5fd; font-weight: 700; font-size: 13px; user-select: none; }
+  .workflow .arrow {
+    color: #c4b5fd;
+    font-weight: 700;
+    font-size: 14px;
+    user-select: none;
+  }
 
-  /* ===== Step 6: tier badges ===== */
-  .tier-row {
-    display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+  /* Tiers in step 6 */
+  .tier-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+    margin-top: 12px;
   }
   .tier {
-    flex: 1; min-width: 90px;
     background: #f8f9fd;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 10px;
+    border-radius: var(--radius-sm);
+    padding: 18px 14px;
     text-align: center;
-    font-size: 12px;
-    line-height: 1.5;
+    transition: background .2s;
   }
-  .tier b { display: block; font-size: 13px; color: var(--text); margin-bottom: 3px; }
-  .tier .icon { font-size: 20px; margin-bottom: 4px; }
-  .tier-note {
-    margin-top: 10px;
-    font-size: 12px; color: var(--t2); text-align: center;
+  .tier:hover { background: #fff; }
+  .tier .ti { font-size: 26px; margin-bottom: 6px; }
+  .tier b { display: block; font-size: 14px; margin-bottom: 4px; }
+  .tier span { font-size: 12px; color: var(--text-light); line-height: 1.5; }
+  .tri-note {
+    margin-top: 12px;
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--text-light);
+  }
+  .tri-note strong { color: var(--text); }
+
+  /* ============ EXAMPLE SECTION ============ */
+  .example-block {
+    background: linear-gradient(155deg, #fafaff 0%, #f5f3ff 100%);
+    border: 1px solid #e4e0f8;
+    border-radius: var(--radius-lg);
+    padding: 36px;
+  }
+  .example-block h3 {
+    font-size: 18px; font-weight: 750;
+    margin-bottom: 6px;
+  }
+  .example-block .subtitle {
+    font-size: 13px; color: var(--text-light); margin-bottom: 20px;
+  }
+  .example-block .before-after {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .example-block .ba-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .example-block .ba-card .ba-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em;
+    margin-bottom: 10px;
+    display: inline-block;
+    padding: 3px 10px; border-radius: 5px;
+  }
+  .example-block .ba-card .ba-label.bad { background: #fef2f2; color: #dc2626; }
+  .example-block .ba-card .ba-label.good { background: #f0fdf4; color: #16a34a; }
+  .example-block .ba-card p { font-size: 13px; color: var(--text-mid); line-height: 1.7; }
+
+  /* ============ PITFALLS ============ */
+  .pitfall-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 14px;
+  }
+  .pitfall {
+    background: #fff;
+    border: 1px solid #fee2e2;
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    border-left: 4px solid #fca5a5;
+    box-shadow: var(--shadow-sm);
+  }
+  .pitfall h4 {
+    font-size: 15px; font-weight: 700; margin-bottom: 6px;
+    color: #991b1b;
+  }
+  .pitfall p {
+    font-size: 13px; color: var(--text-light); line-height: 1.6;
   }
 
-  /* ===== Bottom bar ===== */
-  .bottom {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr;
-    gap: 14px;
-    align-items: stretch;
-  }
-  .summary {
-    background: var(--accent-grad);
-    border-radius: var(--radius);
-    padding: 28px 28px;
-    color: #fff;
+  /* ============ CHECKLIST ============ */
+  .checklist {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px;
     box-shadow: var(--shadow);
-    display: flex; flex-direction: column; justify-content: center;
   }
-  .summary h2 { font-size: 16px; opacity: .85; margin-bottom: 12px; }
-  .summary p {
-    font-size: 15px; font-weight: 700; line-height: 1.7;
+  .checklist h3 { font-size: 18px; font-weight: 750; margin-bottom: 20px; text-align: center; }
+  .checklist .cl-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px 24px;
   }
-  .summary em {
+  .checklist .cl-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.6;
+    padding: 6px 0;
+  }
+  .checklist .cl-item .check {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    background: #d1fae5;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  /* ============ SUMMARY ============ */
+  .summary-cta {
+    background: var(--accent-grad);
+    border-radius: var(--radius-lg);
+    padding: 44px 40px;
+    text-align: center;
+    color: #fff;
+    box-shadow: var(--shadow-xl);
+    margin-top: 48px;
+  }
+  .summary-cta h2 { font-size: 20px; font-weight: 750; opacity: .9; margin-bottom: 16px; }
+  .summary-cta .big-line {
+    font-size: clamp(16px,2.2vw,20px);
+    font-weight: 750;
+    line-height: 1.75;
+    background: rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 18px 28px;
+    display: inline-block;
+  }
+  .summary-cta .big-line em {
     font-style: normal;
     background: rgba(255,255,255,.18);
-    padding: 1px 8px; border-radius: 4px;
+    padding: 1px 8px; border-radius: 5px;
   }
+
+  /* ============ TOMORROW ============ */
   .tomorrow {
+    text-align: center;
+    margin-top: 28px;
+    padding: 28px;
     background: var(--card);
     border: 1px dashed var(--border);
     border-radius: var(--radius);
-    padding: 28px 24px;
-    box-shadow: var(--shadow);
-    display: flex; flex-direction: column; justify-content: center;
-    text-align: center;
   }
-  .tomorrow .badge {
+  .tomorrow .mini-pill {
     display: inline-block;
     background: var(--accent-light);
-    color: var(--accent);
+    color: var(--accent-deep);
     font-size: 11px; font-weight: 700;
     letter-spacing: .06em;
-    padding: 3px 12px; border-radius: 99px;
-    margin: 0 auto 10px;
+    padding: 4px 12px; border-radius: 99px;
+    margin-bottom: 8px;
   }
-  .tomorrow p { font-size: 14px; color: var(--t2); line-height: 1.5; }
+  .tomorrow p { font-size: 15px; color: var(--text-light); font-weight: 500; }
 
+  /* ============ FOOTER ============ */
   .footer {
-    text-align: center; margin-top: 28px;
-    font-size: 12px; color: #bcc0d0;
+    text-align: center;
+    padding: 40px 24px;
+    font-size: 12px;
+    color: #b8bccc;
   }
 
-  /* ===== Responsive ===== */
-  @media (max-width: 750px) {
-    .grid { grid-template-columns: 1fr; }
-    .bottom { grid-template-columns: 1fr; }
-    .core { flex-direction: column; align-items: flex-start; gap: 8px; }
-    body { padding: 16px 12px 32px; }
-    .hero { padding: 28px 20px; }
-    .flow-wrap { gap: 3px; }
-    .tier-row { flex-direction: column; }
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 700px) {
+    .hero-wrap { padding: 44px 16px 60px; }
+    .pain-grid, .pitfall-grid { grid-template-columns: 1fr; }
+    .tier-grid { grid-template-columns: 1fr; }
+    .timeline { padding-left: 40px; }
+    .timeline::before { left: 18px; }
+    .step { padding: 20px 16px; }
+    .step .marker { left: -30px; width: 28px; height: 28px; font-size: 12px; border-radius: 8px; top: 22px; }
+    .checklist .cl-grid { grid-template-columns: 1fr; }
+    .example-block .before-after { grid-template-columns: 1fr; }
+    .concept-bar { margin-left: 16px; margin-right: 16px; padding: 20px; flex-direction: column; align-items: flex-start; }
+    .tri-note { flex-direction: column; align-items: center; gap: 6px; }
+    body { font-size: 14px; }
   }
-  @media (min-width: 751px) and (max-width: 900px) {
-    .grid { grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 701px) and (max-width: 900px) {
+    .pain-grid, .pitfall-grid { grid-template-columns: repeat(2,1fr); }
+    .tier-grid { grid-template-columns: repeat(2,1fr); }
   }
 </style>
 </head>
 <body>
 
-<!-- Hero -->
-<header class="hero">
-  <h1>如何开发属于自己的 Skill？</h1>
-  <p class="sub">从零搭建 AI 专属能力</p>
-  <span class="tag">把高频工作拆解为标准模块，让 AI 按你的方法稳定执行</span>
-</header>
-
-<!-- Core formula -->
-<div class="core">
-  <span class="badge">核心结论</span>
-  <span class="eq">Skill = 场景 + 流程 + 知识 + 模板</span>
-  <span class="note">不是让 AI 自由发挥，而是引导它按你<span style="font-weight:600;">设定的规则</span>干活</span>
+<!-- ==================== HERO ==================== -->
+<div class="hero-wrap">
+  <div class="hero-dots"></div>
+  <div class="hero-dots d2"></div>
+  <div class="hero">
+    <div class="eyebrow">AI SKILL 开发指南</div>
+    <h1>如何开发属于自己的 Skill？</h1>
+    <p class="sub">从零搭建 AI 专属能力，把经验沉淀为可复用的标准模块</p>
+    <span class="tagline">把高频工作拆解为标准模块，让 AI 按你的方法稳定执行</span>
+  </div>
 </div>
 
-<!-- Step cards -->
-<div class="sec-title">六步构建法</div>
+<div class="container">
 
-<div class="grid">
-
-  <!-- 1 -->
-  <div class="card">
-    <div class="num">1</div>
-    <h3>选定具体使用场景</h3>
-    <ul>
-      <li>优先选<strong>重复度高、规则清晰、输出固定</strong>的事</li>
-    </ul>
-    <span class="hl">例：质量周报、问题复盘、会议纪要、风险梳理</span>
+  <!-- ==================== CORE CONCEPT ==================== -->
+  <div class="concept-bar">
+    <span class="pill">核心公式</span>
+    <span class="eq">Skill = 场景 + 流程 + 知识 + 模板</span>
+    <span class="desc">不是让 AI 自由发挥，而是引导它按你<strong>设定的规则</strong>稳定输出</span>
   </div>
 
-  <!-- 2 -->
-  <div class="card">
-    <div class="num">2</div>
-    <h3>梳理输入与输出</h3>
-    <ul>
-      <li><strong>输入：</strong>问题描述、项目进度、文件资料等</li>
-      <li><strong>输出：</strong>周报文档、复盘报告、风险清单等</li>
-    </ul>
-    <span class="hl">边界越清晰，运行越稳定</span>
-  </div>
-
-  <!-- 3 -->
-  <div class="card">
-    <div class="num">3</div>
-    <h3>梳理完整工作流程</h3>
-    <ul>
-      <li>识别有效信息 → 提取核心要点 → 判断潜在风险 → 整理方案 → 格式化输出</li>
-      <li>每一步都要<strong>明确动作</strong>，不给 AI 留模糊空间</li>
-    </ul>
-  </div>
-
-  <!-- 4 -->
-  <div class="card">
-    <div class="num">4</div>
-    <h3>补充专业知识库</h3>
-    <ul>
-      <li>质量标准、检查清单、历史案例</li>
-      <li>文档模板、问题表格、经验总结</li>
-      <li>这些资料决定 Skill 的<strong>专业度</strong></li>
-    </ul>
-  </div>
-
-  <!-- 5 -->
-  <div class="card">
-    <div class="num">5</div>
-    <h3>统一固定输出模板</h3>
-    <div class="flow-wrap">
-      <span class="flow-chip">问题背景</span><span class="flow-arr">→</span>
-      <span class="flow-chip">问题现象</span><span class="flow-arr">→</span>
-      <span class="flow-chip">影响范围</span><span class="flow-arr">→</span>
-      <span class="flow-chip">原因分析</span><span class="flow-arr">→</span>
-      <span class="flow-chip">改善措施</span><span class="flow-arr">→</span>
-      <span class="flow-chip">验证结果</span><span class="flow-arr">→</span>
-      <span class="flow-chip">经验沉淀</span>
+  <!-- ==================== WHY ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">Why</div>
+      <h2>为什么你需要 Skill？</h2>
+      <p>同样的任务重复做，每次都依赖临场发挥？Skill 让你的经验标准化，降低认知负荷。</p>
     </div>
-    <p style="font-size:12px;color:var(--t2);margin-top:8px;text-align:center;">输入可变化，输出永远结构统一</p>
-  </div>
-
-  <!-- 6 -->
-  <div class="card">
-    <div class="num">6</div>
-    <h3>按需叠加工具能力</h3>
-    <div class="tier-row">
-      <div class="tier"><div class="icon">💬</div><b>基础版</b>纯提示词驱动</div>
-      <div class="tier"><div class="icon">📚</div><b>进阶版</b>+ 专属知识库</div>
-      <div class="tier"><div class="icon">🔧</div><b>增强版</b>+ 外部工具、读文件、生成文档</div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="icon red">🔄</div>
+        <h3>重复劳动耗时</h3>
+        <p>周报、复盘、风险梳理——每次从头开始，输出质量不稳定，依赖个人状态。</p>
+      </div>
+      <div class="pain-card">
+        <div class="icon amber">🧠</div>
+        <h3>隐性知识流失</h3>
+        <p>核心经验只存在脑子里，人离职经验就断档，团队能力无法传承。</p>
+      </div>
+      <div class="pain-card">
+        <div class="icon blue">📉</div>
+        <h3>AI 输出不可控</h3>
+        <p>同样的 prompt 每次结果不同，格式各异，审阅成本高，难以批量使用。</p>
+      </div>
     </div>
-    <p class="tier-note"><strong>Prompt</strong> 定执行 · <strong>知识库</strong> 定依据 · <strong>工具</strong> 定能力</p>
   </div>
 
-</div>
+  <!-- ==================== STEPS ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">How</div>
+      <h2>六步构建法</h2>
+      <p>从场景到工具，每一步都在缩小 AI 的"自由裁量权"，让输出更可控。</p>
+    </div>
 
-<!-- Bottom: summary + tomorrow -->
-<div class="bottom">
-  <div class="summary">
+    <div class="timeline">
+
+      <!-- Step 1 -->
+      <div class="step">
+        <div class="marker">1</div>
+        <div class="step-header">
+          <span class="step-icon">🎯</span>
+          <h3>选定具体使用场景</h3>
+        </div>
+        <div class="step-body">
+          <p>好的 Skill 从"窄场景"开始。<strong>不要贪大求全</strong>，优先选高频、规则明确、输出结果容易验证的任务。场景越聚焦，Skill 的稳定性越高，迭代也越快。</p>
+          <ul class="points">
+            <li><strong>判断标准：</strong>重复度 → 规则清晰度 → 输出可验证性</li>
+            <li class="key"><strong>关键原则：</strong>一次只解决一个问题，不要试图覆盖所有情况</li>
+          </ul>
+          <div class="tag-block">
+            <span class="tag">质量周报</span>
+            <span class="tag">问题复盘</span>
+            <span class="tag">会议纪要</span>
+            <span class="tag">风险梳理</span>
+            <span class="tag accent">需求评审</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step step-alt">
+        <div class="marker">2</div>
+        <div class="step-header">
+          <span class="step-icon">📋</span>
+          <h3>梳理输入与输出</h3>
+        </div>
+        <div class="step-body">
+          <p>清晰定义"给什么"和"拿什么"。输入越结构化，AI 的理解偏差越小；输出越模板化，结果越可预期。</p>
+          <ul class="points">
+            <li><strong>输入（Input）：</strong>问题描述、项目进度、原始数据、参考文件、上下文信息</li>
+            <li><strong>输出（Output）：</strong>结构化文档、分析报告、风险清单、行动计划、会议纪要</li>
+            <li class="key"><strong>关键原则：</strong>边界越清晰，运行越稳定——模糊的输入只会带来模糊的输出</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <div class="marker">3</div>
+        <div class="step-header">
+          <span class="step-icon">🔄</span>
+          <h3>梳理完整工作流程</h3>
+        </div>
+        <div class="step-body">
+          <p>将人类专家的思维过程拆解为<strong>可执行的步骤链</strong>。每一步都是明确动作，不给 AI 留"自行判断"的模糊空间。</p>
+          <div class="workflow">
+            <span class="chip">识别有效信息</span>
+            <span class="arrow">→</span>
+            <span class="chip">提取核心要点</span>
+            <span class="arrow">→</span>
+            <span class="chip">判断潜在风险</span>
+            <span class="arrow">→</span>
+            <span class="chip">整理对应方案</span>
+            <span class="arrow">→</span>
+            <span class="chip">固定格式输出</span>
+          </div>
+          <ul class="points" style="margin-top:12px;">
+            <li class="key"><strong>技巧：</strong>每个环节附带判断标准（如"风险等级：高/中/低"），让 AI 有据可依</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step step-alt">
+        <div class="marker">4</div>
+        <div class="step-header">
+          <span class="step-icon">📚</span>
+          <h3>补充专业知识库</h3>
+        </div>
+        <div class="step-body">
+          <p>知识库决定了 Skill 的<strong>专业深度</strong>。通用 AI + 专属知识 = 领域专家。把团队积累的隐性经验显性化，让 AI 有参照系。</p>
+          <ul class="points">
+            <li><strong>质量标准：</strong>验收条件、合格线、评分体系——让 AI 知道"什么叫好"</li>
+            <li><strong>检查清单：</strong>常见遗漏项、必查项清单——确保不丢关键环节</li>
+            <li><strong>历史案例：</strong>典型案例库、处理记录——提供参考锚点</li>
+            <li><strong>模板库：</strong>文档模板、表格格式、报告框架——统一输出规范</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step">
+        <div class="marker">5</div>
+        <div class="step-header">
+          <span class="step-icon">📝</span>
+          <h3>统一固定输出模板</h3>
+        </div>
+        <div class="step-body">
+          <p><strong>输入可以变化，输出永远结构统一。</strong>固定的模板让团队形成统一的阅读习惯，降低理解成本，也方便批量处理和对比分析。</p>
+          <div class="workflow">
+            <span class="chip">问题背景</span>
+            <span class="arrow">→</span>
+            <span class="chip">问题现象</span>
+            <span class="arrow">→</span>
+            <span class="chip">影响范围</span>
+            <span class="arrow">→</span>
+            <span class="chip">原因分析</span>
+            <span class="arrow">→</span>
+            <span class="chip">改善措施</span>
+            <span class="arrow">→</span>
+            <span class="chip">验证结果</span>
+            <span class="arrow">→</span>
+            <span class="chip">经验沉淀</span>
+          </div>
+          <p style="margin-top:12px;font-size:13px;color:var(--text-light);">示例：质量复盘模板 ( 7 段式 )——任何质量问题都按此结构输出</p>
+        </div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="step step-alt">
+        <div class="marker">6</div>
+        <div class="step-header">
+          <span class="step-icon">🔧</span>
+          <h3>按需叠加工具能力</h3>
+        </div>
+        <div class="step-body">
+          <p>从纯文本到自动化，根据实际需要<strong>渐进式</strong>增强，不要一开始就追求大而全。</p>
+          <div class="tier-grid">
+            <div class="tier">
+              <div class="ti">💬</div>
+              <b>基础版</b>
+              <span>纯提示词驱动<br>上手快、零成本</span>
+            </div>
+            <div class="tier">
+              <div class="ti">📚</div>
+              <b>进阶版</b>
+              <span>+ 专属知识库<br>专业度大幅提升</span>
+            </div>
+            <div class="tier">
+              <div class="ti">⚡</div>
+              <b>增强版</b>
+              <span>+ 外部工具集成<br>读文件、生成文档、对接协作软件</span>
+            </div>
+          </div>
+          <div class="tri-note">
+            <span><strong>Prompt</strong> 定执行方式</span>
+            <span><strong>知识库</strong> 定参考依据</span>
+            <span><strong>工具调用</strong> 定实操能力</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- .timeline -->
+  </div>
+
+  <!-- ==================== REAL EXAMPLE ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">Example</div>
+      <h2>实战对比：质量周报 Skill</h2>
+      <p>一个真实的场景：每周五需要出具项目质量周报</p>
+    </div>
+    <div class="example-block">
+      <h3>需求：生成项目质量周报</h3>
+      <p class="subtitle">同一个需求，有无 Skill 的差别</p>
+      <div class="before-after">
+        <div class="ba-card">
+          <span class="ba-label bad">❌ 无 Skill（自由发挥）</span>
+          <p>"帮我写一份质量周报"<br><br>→ AI 随意生成，格式不固定<br>→ 每次摘要结构不一样<br>→ 可能遗漏关键风险项<br>→ 需要反复修改措辞<br>→ 不同人用效果完全随机</p>
+        </div>
+        <div class="ba-card">
+          <span class="ba-label good">✅ 有 Skill（规则驱动）</span>
+          <p><strong>场景：</strong>周报生成<br>
+          <strong>输入：</strong>本周 bug 列表 + 迭代进度<br>
+          <strong>流程：</strong>统计 → 分类 → 趋势 → 风险<br>
+          <strong>知识：</strong>质量红线标准 + 历史基准<br>
+          <strong>模板：</strong>7 段式固定结构<br><br>
+          → 每次输出格式一致，可批量对比</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PITFALLS ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">Warning</div>
+      <h2>常见误区</h2>
+      <p>避开这些坑，少走弯路</p>
+    </div>
+    <div class="pitfall-grid">
+      <div class="pitfall">
+        <h4>❌ 场景太宽</h4>
+        <p>"帮我处理所有质量问题"——范围过大导致 prompt 复杂且效果差。一个好的 Skill 只解决一件事。</p>
+      </div>
+      <div class="pitfall">
+        <h4>❌ 缺检查标准</h4>
+        <p>只给了流程没给判断标准，AI 不知道"什么叫好"，输出质量靠运气。</p>
+      </div>
+      <div class="pitfall">
+        <h4>❌ 一步到位追求完美</h4>
+        <p>先跑通 MVP（最小可用版本），再逐步迭代优化。完美主义是 Skill 开发的头号杀手。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHECKLIST ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="label">Checklist</div>
+      <h2>启动清单</h2>
+      <p>开始写第一个 Skill 前，确认以下几点</p>
+    </div>
+    <div class="checklist">
+      <div class="cl-grid">
+        <div class="cl-item"><span class="check">✓</span> 选定了一个高频、重复、规则清晰的具体场景</div>
+        <div class="cl-item"><span class="check">✓</span> 明确了输入格式和输出模板的结构</div>
+        <div class="cl-item"><span class="check">✓</span> 拆解了完整的步骤流程，每一步都有动作和标准</div>
+        <div class="cl-item"><span class="check">✓</span> 准备好了相关的质量标准、历史案例、模板文档</div>
+        <div class="cl-item"><span class="check">✓</span> 用 3~5 个真实案例测试过，输出结果稳定可复现</div>
+        <div class="cl-item"><span class="check">✓</span> 团队其他人也能用同样的 Skill 得到一致结果</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUMMARY ==================== -->
+  <div class="summary-cta">
     <h2>一句话总结</h2>
-    <p>开发 Skill = 把高频工作拆解为<em>场景</em>、<em>输入</em>、<em>流程</em>、<em>知识</em>、<em>输出</em> 五大模块，让 AI 稳定完成同类任务</p>
+    <p class="big-line">
+      开发 Skill = 把高频工作拆解为<br>
+      <em>场景</em>、<em>输入</em>、<em>流程</em>、<em>知识</em>、<em>输出</em> 五大模块<br>
+      让 AI 稳定完成同类任务
+    </p>
   </div>
+
+  <!-- ==================== TOMORROW ==================== -->
   <div class="tomorrow">
-    <span class="badge">明日预告</span>
+    <span class="mini-pill">明日预告</span>
     <p>从一个问题到一个 AI 应用场景，中间差了什么？</p>
   </div>
-</div>
 
-<footer class="footer">Skill 开发指南</footer>
+</div><!-- .container -->
+
+<footer class="footer">Skill 开发指南 · Made with Care</footer>
 
 </body>
 </html>
