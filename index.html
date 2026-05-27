@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>如何开发属于自己的 Skill？</title>
+<style>
+  :root {
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --accent-grad: linear-gradient(135deg, #4f46e5, #7c3aed);
+    --accent-grad-h: linear-gradient(135deg, #4338ca, #6d28d9);
+    --bg: #f5f6fb;
+    --card: #fff;
+    --text: #1a1a2e;
+    --t2: #5b5f7b;
+    --border: #e2e5f0;
+    --shadow: 0 2px 8px rgba(0,0,0,.05), 0 1px 3px rgba(0,0,0,.03);
+    --radius: 12px;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 32px 20px 40px;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    background: var(--accent-grad);
+    color: #fff;
+    border-radius: 20px;
+    padding: 40px 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 25% 50%, rgba(255,255,255,.07) 0%, transparent 55%),
+                radial-gradient(circle at 75% 30%, rgba(255,255,255,.05) 0%, transparent 50%);
+  }
+  .hero h1 { font-size: clamp(24px,3.5vw,36px); font-weight:800; letter-spacing:-.015em; position:relative; z-index:1; }
+  .hero .sub {
+    font-size: 16px; opacity: .8; margin: 6px 0 14px; position:relative; z-index:1;
+  }
+  .hero .tag {
+    display: inline-block;
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 99px;
+    padding: 6px 20px;
+    font-size: 14px;
+    position: relative; z-index: 1;
+  }
+
+  /* ===== Core formula (merged into hero area) ===== */
+  .core {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 28px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .core .badge {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .06em;
+    padding: 4px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .core .eq {
+    font-size: clamp(17px, 2vw, 20px);
+    font-weight: 700;
+    letter-spacing: .01em;
+  }
+  .core .note { color: var(--t2); font-size: 14px; }
+
+  /* ===== Section title ===== */
+  .sec-title {
+    text-align: center;
+    margin: 0 0 24px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+  }
+  .sec-title::before, .sec-title::after {
+    content: '';
+    height: 1px;
+    flex: 1;
+    background: var(--border);
+    max-width: 80px;
+  }
+
+  /* ===== 3-column step cards ===== */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 18px;
+    box-shadow: var(--shadow);
+    transition: box-shadow .2s, transform .2s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.07); transform: translateY(-1px); }
+  .card .num {
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: var(--accent-grad);
+    color: #fff;
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+  .card ul {
+    list-style: none; font-size: 13px; color: var(--t2); line-height: 1.8;
+  }
+  .card ul li::before { content: '•'; margin-right: 6px; color: var(--accent); font-weight: 700; }
+  .card .hl {
+    margin-top: 10px;
+    display: inline-block;
+    background: #fffbf0;
+    border: 1px solid #fde68a;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #92400e;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  /* ===== Step 5: template flow ===== */
+  .flow-wrap {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+  .flow-chip {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+  }
+  .flow-arr { color: #c4b5fd; font-weight: 700; font-size: 13px; user-select: none; }
+
+  /* ===== Step 6: tier badges ===== */
+  .tier-row {
+    display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+  }
+  .tier {
+    flex: 1; min-width: 90px;
+    background: #f8f9fd;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 10px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .tier b { display: block; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+  .tier .icon { font-size: 20px; margin-bottom: 4px; }
+  .tier-note {
+    margin-top: 10px;
+    font-size: 12px; color: var(--t2); text-align: center;
+  }
+
+  /* ===== Bottom bar ===== */
+  .bottom {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 14px;
+    align-items: stretch;
+  }
+  .summary {
+    background: var(--accent-grad);
+    border-radius: var(--radius);
+    padding: 28px 28px;
+    color: #fff;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .summary h2 { font-size: 16px; opacity: .85; margin-bottom: 12px; }
+  .summary p {
+    font-size: 15px; font-weight: 700; line-height: 1.7;
+  }
+  .summary em {
+    font-style: normal;
+    background: rgba(255,255,255,.18);
+    padding: 1px 8px; border-radius: 4px;
+  }
+  .tomorrow {
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column; justify-content: center;
+    text-align: center;
+  }
+  .tomorrow .badge {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .06em;
+    padding: 3px 12px; border-radius: 99px;
+    margin: 0 auto 10px;
+  }
+  .tomorrow p { font-size: 14px; color: var(--t2); line-height: 1.5; }
+
+  .footer {
+    text-align: center; margin-top: 28px;
+    font-size: 12px; color: #bcc0d0;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 750px) {
+    .grid { grid-template-columns: 1fr; }
+    .bottom { grid-template-columns: 1fr; }
+    .core { flex-direction: column; align-items: flex-start; gap: 8px; }
+    body { padding: 16px 12px 32px; }
+    .hero { padding: 28px 20px; }
+    .flow-wrap { gap: 3px; }
+    .tier-row { flex-direction: column; }
+  }
+  @media (min-width: 751px) and (max-width: 900px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+  <h1>如何开发属于自己的 Skill？</h1>
+  <p class="sub">从零搭建 AI 专属能力</p>
+  <span class="tag">把高频工作拆解为标准模块，让 AI 按你的方法稳定执行</span>
+</header>
+
+<!-- Core formula -->
+<div class="core">
+  <span class="badge">核心结论</span>
+  <span class="eq">Skill = 场景 + 流程 + 知识 + 模板</span>
+  <span class="note">不是让 AI 自由发挥，而是引导它按你<span style="font-weight:600;">设定的规则</span>干活</span>
+</div>
+
+<!-- Step cards -->
+<div class="sec-title">六步构建法</div>
+
+<div class="grid">
+
+  <!-- 1 -->
+  <div class="card">
+    <div class="num">1</div>
+    <h3>选定具体使用场景</h3>
+    <ul>
+      <li>优先选<strong>重复度高、规则清晰、输出固定</strong>的事</li>
+    </ul>
+    <span class="hl">例：质量周报、问题复盘、会议纪要、风险梳理</span>
+  </div>
+
+  <!-- 2 -->
+  <div class="card">
+    <div class="num">2</div>
+    <h3>梳理输入与输出</h3>
+    <ul>
+      <li><strong>输入：</strong>问题描述、项目进度、文件资料等</li>
+      <li><strong>输出：</strong>周报文档、复盘报告、风险清单等</li>
+    </ul>
+    <span class="hl">边界越清晰，运行越稳定</span>
+  </div>
+
+  <!-- 3 -->
+  <div class="card">
+    <div class="num">3</div>
+    <h3>梳理完整工作流程</h3>
+    <ul>
+      <li>识别有效信息 → 提取核心要点 → 判断潜在风险 → 整理方案 → 格式化输出</li>
+      <li>每一步都要<strong>明确动作</strong>，不给 AI 留模糊空间</li>
+    </ul>
+  </div>
+
+  <!-- 4 -->
+  <div class="card">
+    <div class="num">4</div>
+    <h3>补充专业知识库</h3>
+    <ul>
+      <li>质量标准、检查清单、历史案例</li>
+      <li>文档模板、问题表格、经验总结</li>
+      <li>这些资料决定 Skill 的<strong>专业度</strong></li>
+    </ul>
+  </div>
+
+  <!-- 5 -->
+  <div class="card">
+    <div class="num">5</div>
+    <h3>统一固定输出模板</h3>
+    <div class="flow-wrap">
+      <span class="flow-chip">问题背景</span><span class="flow-arr">→</span>
+      <span class="flow-chip">问题现象</span><span class="flow-arr">→</span>
+      <span class="flow-chip">影响范围</span><span class="flow-arr">→</span>
+      <span class="flow-chip">原因分析</span><span class="flow-arr">→</span>
+      <span class="flow-chip">改善措施</span><span class="flow-arr">→</span>
+      <span class="flow-chip">验证结果</span><span class="flow-arr">→</span>
+      <span class="flow-chip">经验沉淀</span>
+    </div>
+    <p style="font-size:12px;color:var(--t2);margin-top:8px;text-align:center;">输入可变化，输出永远结构统一</p>
+  </div>
+
+  <!-- 6 -->
+  <div class="card">
+    <div class="num">6</div>
+    <h3>按需叠加工具能力</h3>
+    <div class="tier-row">
+      <div class="tier"><div class="icon">💬</div><b>基础版</b>纯提示词驱动</div>
+      <div class="tier"><div class="icon">📚</div><b>进阶版</b>+ 专属知识库</div>
+      <div class="tier"><div class="icon">🔧</div><b>增强版</b>+ 外部工具、读文件、生成文档</div>
+    </div>
+    <p class="tier-note"><strong>Prompt</strong> 定执行 · <strong>知识库</strong> 定依据 · <strong>工具</strong> 定能力</p>
+  </div>
+
+</div>
+
+<!-- Bottom: summary + tomorrow -->
+<div class="bottom">
+  <div class="summary">
+    <h2>一句话总结</h2>
+    <p>开发 Skill = 把高频工作拆解为<em>场景</em>、<em>输入</em>、<em>流程</em>、<em>知识</em>、<em>输出</em> 五大模块，让 AI 稳定完成同类任务</p>
+  </div>
+  <div class="tomorrow">
+    <span class="badge">明日预告</span>
+    <p>从一个问题到一个 AI 应用场景，中间差了什么？</p>
+  </div>
+</div>
+
+<footer class="footer">Skill 开发指南</footer>
+
+</body>
+</html>
