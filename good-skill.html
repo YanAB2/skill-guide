@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一个好的 Skill 应该长什么样？</title>
+<style>
+  :root {
+    --accent: #0ea5a0;
+    --accent-deep: #0d8c87;
+    --accent-light: #f0fdfc;
+    --accent-grad: linear-gradient(140deg, #0ea5a0 0%, #14b8a6 50%, #5eead4 100%);
+    --warn: #f59e0b;
+    --warn-light: #fffdf5;
+    --rose: #ec4899;
+    --rose-light: #fdf2f8;
+    --bg: #fafcfb;
+    --card: #ffffff;
+    --text: #1a2625;
+    --text-mid: #3d504d;
+    --text-light: #6b807b;
+    --border: #e4ece9;
+    --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+    --shadow: 0 4px 16px rgba(0,0,0,.05), 0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.03);
+    --radius: 12px;
+    --radius-lg: 18px;
+    --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  html { background: var(--bg); }
+
+  body {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:
+      radial-gradient(ellipse 80% 80% at 5% 40%, rgba(14,165,160,.03) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 60% at 90% 60%, rgba(94,234,212,.03) 0%, transparent 50%);
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.76;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 16px 24px;
+  }
+  .topbar .logo-placeholder {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 2px dashed #c8dcd6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #a0b8b0;
+    text-align: center;
+    line-height: 1.3;
+    margin-left: auto;
+    background: rgba(255,255,255,.7);
+    cursor: default;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ===== HERO ===== */
+  .hero-section {
+    text-align: center;
+    padding: 12px 0 28px;
+  }
+  .hero-section .hero-emoji {
+    font-size: 44px;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .hero-section h1 {
+    font-size: clamp(22px,3.6vw,32px);
+    font-weight: 800;
+    letter-spacing: -.015em;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 12px;
+  }
+  .hero-section .sub {
+    font-size: 16px;
+    color: var(--accent-deep);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .hero-section .core {
+    display: inline-block;
+    background: var(--accent-light);
+    border: 1px solid #b2ece8;
+    border-radius: 99px;
+    padding: 7px 22px;
+    font-size: 14px;
+    color: var(--accent-deep);
+    font-weight: 600;
+  }
+
+  /* ===== DIVIDER ===== */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    margin: 0 0 8px;
+    opacity: .18;
+  }
+  .section-divider span {
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .section-divider span:nth-child(2) { width: 5px; height: 5px; opacity: .7; }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-top: 30px;
+  }
+  .section-hd {
+    margin-bottom: 18px;
+  }
+  .section-hd .emoji-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent-deep);
+    letter-spacing: .03em;
+    margin-bottom: 4px;
+  }
+  .section-hd h2 {
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: -.01em;
+  }
+  .section-hd .desc {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+
+  /* ===== COMPARE CARDS ===== */
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .cmp-card {
+    padding: 22px 20px;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .cmp-card.bad {
+    background: #fef9f6;
+    border: 1px solid #fdddc8;
+    border-left: 4px solid var(--warn);
+  }
+  .cmp-card.good {
+    background: var(--accent-light);
+    border: 1px solid #b2ece8;
+    border-left: 4px solid var(--accent);
+  }
+  .cmp-card .cmp-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 3px 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  .cmp-card.bad .cmp-tag { background: var(--warn-light); color: #92400e; }
+  .cmp-card.good .cmp-tag { background: #ccfbf1; color: #115e59; }
+  .cmp-card p {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    font-family: "SF Mono","Cascadia Code","Consolas",monospace;
+    font-style: italic;
+  }
+  .compare-note {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+
+  /* ===== FEATURE TABLE ===== */
+  .feature-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xs);
+  }
+  .feature-table thead th {
+    background: #f6faf8;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .feature-table thead th:first-child { width: 20%; }
+  .feature-table thead th:nth-child(2) { width: 42%; }
+  .feature-table thead th:last-child { width: 38%; }
+  .feature-table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+    line-height: 1.55;
+    background: var(--card);
+  }
+  .feature-table tbody tr:last-child td { border-bottom: none; }
+  .feature-table .missing {
+    font-size: 13px;
+    color: #b91c1c;
+    background: #fef5f5;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .closing-note {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+
+  /* ===== ANATOMY BLOCK ===== */
+  .anatomy {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .anatomy-layer {
+    display: flex;
+    gap: 14px;
+    align-items: stretch;
+  }
+  .anatomy-layer .al-icon {
+    width: 44px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .anatomy-layer:nth-child(1) .al-icon { background: #fef2f2; }
+  .anatomy-layer:nth-child(2) .al-icon { background: var(--warn-light); }
+  .anatomy-layer:nth-child(3) .al-icon { background: var(--accent-light); }
+  .anatomy-layer .al-content {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+  }
+  .anatomy-layer .al-content h3 {
+    font-size: 15px; font-weight: 700; margin-bottom: 4px;
+  }
+  .anatomy-layer .al-content p {
+    font-size: 13px; color: var(--text-light); line-height: 1.6;
+  }
+  .anatomy-footnote {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    padding: 14px 18px;
+    background: #f9fbfa;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+
+  /* ===== SELF-CHECK ===== */
+  .check-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .check-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-xs);
+  }
+  .check-row .cq {
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: #f0fdfc;
+    color: var(--accent-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+  }
+  .check-row p { font-size: 14px; color: var(--text-mid); line-height: 1.5; flex: 1; }
+  .check-row p strong { color: var(--text); }
+
+  /* ===== EXAMPLE TABLE ===== */
+  .example-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-xs);
+  }
+  .example-table thead th {
+    background: #f6faf8;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .example-table thead th:first-child { width: 18%; }
+  .example-table tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+    line-height: 1.55;
+    background: var(--card);
+  }
+  .example-table tbody tr:last-child td { border-bottom: none; }
+  .example-table tbody td:first-child {
+    font-weight: 700;
+    color: var(--accent-deep);
+  }
+  .example-note {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    font-weight: 600;
+  }
+
+  /* ===== SUMMARY ===== */
+  .summary-cta {
+    background: var(--accent-grad);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    text-align: center;
+    color: #fff;
+    box-shadow: var(--shadow-lg);
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 25% 35%, rgba(255,255,255,.06) 0%, transparent 55%),
+      radial-gradient(circle at 75% 65%, rgba(255,255,255,.04) 0%, transparent 50%);
+  }
+  .summary-cta h2 { font-size: 18px; font-weight: 750; opacity: .9; margin-bottom: 14px; position: relative; z-index: 1; }
+  .summary-cta p {
+    font-size: 15px; font-weight: 600; line-height: 1.75;
+    position: relative; z-index: 1;
+    max-width: 580px; margin: 0 auto;
+  }
+
+  /* ===== TOMORROW ===== */
+  .tomorrow {
+    text-align: center;
+    margin-top: 22px;
+    padding: 22px;
+    background: var(--card);
+    border: 1px dashed #c8dcd6;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .tomorrow::after {
+    content: '';
+    position: absolute;
+    top: -18px; left: -18px;
+    width: 70px; height: 70px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    opacity: .4;
+  }
+  .tomorrow .mini-pill {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .05em;
+    padding: 3px 12px; border-radius: 99px;
+    margin-bottom: 8px;
+    position: relative; z-index: 1;
+  }
+  .tomorrow p { font-size: 14px; color: var(--text-light); font-weight: 500; position: relative; z-index: 1; }
+
+  .footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: #b0c8c0;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .compare-row { grid-template-columns: 1fr; }
+    .feature-table, .example-table { font-size: 12px; }
+    .feature-table thead th, .feature-table tbody td,
+    .example-table thead th, .example-table tbody td { padding: 8px 10px; }
+    .hero-section h1 { font-size: 21px; }
+    .anatomy-layer { flex-direction: column; gap: 8px; }
+    .anatomy-layer .al-icon { width: 38px; height: 38px; }
+  }
+  @media (min-width: 641px) and (max-width: 850px) {
+    .feature-table, .example-table { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-placeholder" title="质量管理部 LOGO 放置位">质量<br>管理部</div>
+</div>
+
+<div class="container">
+
+  <!-- ==================== HERO ==================== -->
+  <div class="hero-section">
+    <span class="hero-emoji">⭐</span>
+    <h1>一个好的 Skill 应该长什么样？</h1>
+    <p class="sub">不是能跑就行，是换了个人也能跑</p>
+    <span class="core">好 Skill = 新人拿来能用 + 老人用了不骂 + 结果可以验证</span>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 一、先看两个 Skill ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🔍 第一部分</div>
+      <h2>先看两个 Skill，你选哪个？</h2>
+    </div>
+    <div class="compare-row">
+      <div class="cmp-card bad">
+        <span class="cmp-tag">Skill A</span>
+        <p>"帮我写一份质量周报。"</p>
+      </div>
+      <div class="cmp-card good">
+        <span class="cmp-tag">Skill B</span>
+        <p>"每周五，质量工程师提供本周 bug 清单和迭代进度，AI 按照「统计 → 分类 → 趋势 → 风险 → 建议」五步流程，输出 7 段式质量周报。内容需包含数据对比表，风险项附建议优先级。最终结果可直接粘贴到项目汇报 PPT。"</p>
+      </div>
+    </div>
+    <p class="compare-note">
+      如果你选 A，说明你是个<strong>乐观的人</strong>。如果你选 B，说明你<strong>被自由发挥的 AI 坑过</strong>。<br>
+      A 和 B 的区别，就是"随便聊聊天"和"真正落地干活"的区别。
+    </p>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 二、五个必备特征 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🖐️ 第二部分</div>
+      <h2>一个好 Skill 的五个必备特征</h2>
+    </div>
+    <table class="feature-table">
+      <thead>
+        <tr>
+          <th>特征</th>
+          <th>解释</th>
+          <th>如果缺了会怎样</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>场景明确</td>
+          <td>什么时候用、谁用、解决什么问题</td>
+          <td><span class="missing">AI 在不需要它的地方瞎积极</span></td>
+        </tr>
+        <tr>
+          <td>输入清晰</td>
+          <td>给什么资料、什么格式、谁提供</td>
+          <td><span class="missing">AI 开始脑补，而且脑补得很自信</span></td>
+        </tr>
+        <tr>
+          <td>流程固定</td>
+          <td>分几步、每步做什么、判断标准是什么</td>
+          <td><span class="missing">AI 这次走 A 路线，下次走 C 路线，下下次抄了条近道</span></td>
+        </tr>
+        <tr>
+          <td>输出统一</td>
+          <td>固定模板、固定结构、固定格式</td>
+          <td><span class="missing">每次拿到的东西长得像不同的人写的——实际上是同一个 AI</span></td>
+        </tr>
+        <tr>
+          <td>结果可验证</td>
+          <td>怎样算好、怎样算不合格、检查项有哪些</td>
+          <td><span class="missing">好不好全凭感觉，感觉这东西不太靠谱</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="closing-note">
+      一个好的 Skill，就是把这五点串在一起，让 AI 从一个<strong>"会聊天的朋友"</strong>变成一个<strong>"会干活的同事"</strong>。
+    </p>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 三、解剖一个好 Skill ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🔬 第三部分</div>
+      <h2>解剖一个好 Skill：它长这样</h2>
+      <p class="desc">就好比你要装修房子，你不能只跟装修队说"弄好看点"——你会给户型图、效果图、材料清单、验收标准。Skill 也一样。</p>
+    </div>
+    <div class="anatomy">
+      <div class="anatomy-layer">
+        <div class="al-icon">🪪</div>
+        <div class="al-content">
+          <h3>身份卡：这东西是干嘛的</h3>
+          <p>场景 + 适用对象 + 核心目标</p>
+        </div>
+      </div>
+      <div class="anatomy-layer">
+        <div class="al-icon">📋</div>
+        <div class="al-content">
+          <h3>说明书：具体怎么干</h3>
+          <p>输入规则 + 处理流程 + 知识库</p>
+        </div>
+      </div>
+      <div class="anatomy-layer">
+        <div class="al-icon">📦</div>
+        <div class="al-content">
+          <h3>交付物：最后交出什么</h3>
+          <p>输出模板 + 格式要求 + 验收标准</p>
+        </div>
+      </div>
+    </div>
+    <div class="anatomy-footnote">
+      三块缺一块，Skill 就瘸腿——<strong>缺身份卡</strong>，别人不知道这东西存在；<strong>缺说明书</strong>，AI 自由发挥，结果看天意；<strong>缺交付物</strong>，生成了也不知道能不能用。
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 四、四个自测题 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🧪 第四部分</div>
+      <h2>好 Skill 的四个自测题</h2>
+      <p class="desc">写完之后，拿这四道题拷问一下——</p>
+    </div>
+    <div class="check-list">
+      <div class="check-row">
+        <div class="cq">1</div>
+        <p><strong>换个新人能用吗？</strong>随便找个不了解背景的同事，拿着 Skill 描述，能不能用起来？</p>
+      </div>
+      <div class="check-row">
+        <div class="cq">2</div>
+        <p><strong>连续用 10 次结果一致吗？</strong>不是内容一样，而是结构、格式、信息密度保持一致。</p>
+      </div>
+      <div class="check-row">
+        <div class="cq">3</div>
+        <p><strong>能说出好在哪差在哪吗？</strong>如果每次只能模糊评价"还行""不太好"，说明缺验证标准。</p>
+      </div>
+      <div class="check-row">
+        <div class="cq">4</div>
+        <p><strong>三个月后还能用吗？</strong>场景没变、流程没变、模板没变——好的 Skill 是耐用品，不是快消品。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 五、具体实例 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">📐 第五部分</div>
+      <h2>一个具体的"好 Skill"长这样</h2>
+      <p class="desc">以"缺陷严重等级判定 Skill"为例——开发提了一个 bug，到底是 P0 还是 P2？别再拍脑袋决定了。</p>
+    </div>
+    <table class="example-table">
+      <thead>
+        <tr>
+          <th>模块</th>
+          <th>内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>场景</td>
+          <td>每次新缺陷提交后，质量工程师提供缺陷描述和复现步骤，AI 自动判定严重等级并给出定级依据</td>
+        </tr>
+        <tr>
+          <td>输入</td>
+          <td>缺陷标题 + 详细描述 + 复现步骤 + 涉及模块 + 当前版本</td>
+        </tr>
+        <tr>
+          <td>流程</td>
+          <td>解析缺陷信息 → 匹配等级判定规则 → 识别受影响用户范围 → 评估业务阻断程度 → 输出定级结果 + 判定理由</td>
+        </tr>
+        <tr>
+          <td>知识库</td>
+          <td>缺陷等级定义标准（P0~P3）、历史定级案例库、各模块业务重要度权重表</td>
+        </tr>
+        <tr>
+          <td>输出模板</td>
+          <td>缺陷 ID + 建议等级 + 判定理由（引用具体规则条款）+ 影响范围说明 + 建议处理时效</td>
+        </tr>
+        <tr>
+          <td>验收标准</td>
+          <td>定级与人工专家一致率 ≥ 90%、判定理由包含具体规则引用、单次判定 ≤ 30 秒</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="example-note">
+      一对照就清楚：好 Skill 不靠形容词，靠的是<strong>每个环节都有明确输入和可检查的输出</strong>。
+    </p>
+  </div>
+
+  <!-- ==================== SUMMARY ==================== -->
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>好的 Skill 不需要使用说明——它是<strong>逻辑自洽的</strong>：场景告诉 AI 何时启动，输入告诉 AI 素材在哪，流程告诉 AI 怎么思考，模板告诉 AI 怎么交付，验证告诉你用得好不好。</p>
+  </div>
+
+  <!-- ==================== TOMORROW ==================== -->
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>AI 落地失败的五个常见原因</p>
+  </div>
+
+</div>
+
+<footer class="footer">Skill 设计指南 · 质量管理部</footer>
+
+</body>
+</html>
