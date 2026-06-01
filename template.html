@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 应用为什么需要标准模板？</title>
+<style>
+  :root {
+    --accent: #3b82f6;
+    --accent-deep: #2563eb;
+    --accent-light: #eff6ff;
+    --accent-grad: linear-gradient(140deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%);
+    --teal: #0d9488;
+    --teal-light: #f0fdfa;
+    --amber: #f59e0b;
+    --amber-light: #fffdf5;
+    --bg: #f2f6fc;
+    --card: #ffffff;
+    --text: #1a2332;
+    --text-mid: #3d4f63;
+    --text-light: #6b7c93;
+    --border: #e2e8f2;
+    --shadow-sm: 0 1px 4px rgba(40,80,140,.04);
+    --shadow: 0 3px 14px rgba(40,80,140,.06), 0 1px 4px rgba(40,80,140,.03);
+    --shadow-lg: 0 8px 32px rgba(40,80,140,.08), 0 3px 10px rgba(40,80,140,.04);
+    --radius: 14px;
+    --radius-lg: 20px;
+    --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+  html { background: var(--bg); }
+
+  body {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:
+      radial-gradient(ellipse 100% 100% at 0% 35%, rgba(59,130,246,.05) 0%, transparent 55%),
+      radial-gradient(ellipse 80% 80% at 100% 60%, rgba(96,165,250,.04) 0%, transparent 50%),
+      radial-gradient(circle at 60% 20%, rgba(147,197,253,.03) 0%, transparent 55%);
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.78;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 16px 24px;
+  }
+  .topbar .logo-placeholder {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    border: 2px dashed #c8d6e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #a0b5cc;
+    text-align: center;
+    line-height: 1.3;
+    margin-left: auto;
+    background: rgba(255,255,255,.7);
+    cursor: default;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+
+  /* ===== HERO ===== */
+  .hero-section {
+    text-align: center;
+    padding: 16px 0 32px;
+  }
+  .hero-section .hero-emoji {
+    font-size: 48px;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .hero-section h1 {
+    font-size: clamp(23px,3.8vw,34px);
+    font-weight: 850;
+    letter-spacing: -.015em;
+    color: var(--text);
+    line-height: 1.35;
+    margin-bottom: 14px;
+  }
+  .hero-section .intro {
+    font-size: 14px;
+    color: var(--text-mid);
+    max-width: 650px;
+    margin: 0 auto;
+    line-height: 1.85;
+    text-align: left;
+    padding: 18px 24px;
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ===== CORE QUOTE ===== */
+  .core-quote {
+    text-align: center;
+    padding: 14px 24px;
+    margin-top: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent-deep);
+    background: var(--accent-light);
+    border-radius: 99px;
+    border: 1px solid #bfdbfe;
+    display: inline-block;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  /* ===== SECTION ===== */
+  .section {
+    margin-top: 32px;
+  }
+  .section-hd {
+    margin-bottom: 20px;
+  }
+  .section-hd .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .section-hd h2 {
+    font-size: 20px;
+    font-weight: 750;
+    display: inline;
+    vertical-align: middle;
+  }
+  .section-hd p {
+    font-size: 14px;
+    color: var(--text-light);
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+
+  /* ===== PROBLEM CARDS ===== */
+  .quote-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .quote-item {
+    background: #f8fafd;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-mid);
+    border-left: 3px solid #bfdbfe;
+    font-style: italic;
+  }
+  .insight-block {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .insight-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .insight-card .ic-emoji { font-size: 24px; margin-bottom: 8px; display: block; }
+  .insight-card p { font-size: 13px; color: var(--text-mid); line-height: 1.6; }
+  .insight-summary {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+    padding: 14px 18px;
+    background: var(--accent-light);
+    border-radius: var(--radius-sm);
+    border: 1px solid #bfdbfe;
+  }
+
+  /* ===== SCENARIO COMPARE ===== */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 12px;
+  }
+  .scenario-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: box-shadow .2s, transform .2s;
+  }
+  .scenario-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+  .scenario-card .sc-label {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 3px 10px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+  }
+  .scenario-card:nth-child(1) .sc-label { background: #dbeafe; color: #1d4ed8; }
+  .scenario-card:nth-child(2) .sc-label { background: #fef3c7; color: #92400e; }
+  .scenario-card:nth-child(3) .sc-label { background: #fce7f3; color: #9d174d; }
+  .scenario-card h3 { font-size: 14px; font-weight: 700; margin: 8px 0; }
+  .scenario-card p { font-size: 13px; color: var(--text-light); line-height: 1.6; }
+
+  /* ===== TEMPLATE DEMO ===== */
+  .template-demo {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .template-demo .flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    margin: 16px 0;
+  }
+  .template-demo .flow .step {
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    font-weight: 650;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 7px;
+    border: 1px solid #bfdbfe;
+  }
+  .template-demo .flow .arr {
+    color: #93c5fd;
+    font-weight: 700;
+    font-size: 14px;
+    user-select: none;
+  }
+  .template-demo .demo-note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 8px;
+  }
+
+  /* ===== REUSE LIST ===== */
+  .reuse-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 10px;
+  }
+  .reuse-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--text-mid);
+    box-shadow: var(--shadow-sm);
+  }
+  .reuse-item .ri-icon {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .reuse-item .ri-icon.blue { background: var(--accent-light); }
+  .highlight-box {
+    margin-top: 14px;
+    padding: 14px 18px;
+    background: #f8fafd;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+
+  /* ===== VERIFY CHECKS ===== */
+  .check-grid {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--text-mid);
+    box-shadow: var(--shadow-sm);
+  }
+  .check-item .ci {
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: #d1fae5;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .verify-conclusion {
+    margin-top: 14px;
+    padding: 14px 18px;
+    background: var(--accent-light);
+    border-radius: var(--radius-sm);
+    border: 1px solid #bfdbfe;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.7;
+  }
+
+  /* ===== CONCLUSION ===== */
+  .conclusion-block {
+    background: linear-gradient(150deg, #f8fafe 0%, #eff6ff 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-lg);
+    padding: 30px;
+    margin-top: 32px;
+  }
+  .conclusion-block p {
+    font-size: 14px;
+    color: var(--text-mid);
+    line-height: 1.9;
+  }
+  .conclusion-block p + p {
+    margin-top: 12px;
+  }
+
+  /* ===== SUMMARY ===== */
+  .summary-cta {
+    background: var(--accent-grad);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    text-align: center;
+    color: #fff;
+    box-shadow: var(--shadow-lg);
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 25% 35%, rgba(255,255,255,.06) 0%, transparent 55%),
+      radial-gradient(circle at 75% 65%, rgba(255,255,255,.04) 0%, transparent 50%);
+  }
+  .summary-cta h2 { font-size: 18px; font-weight: 750; opacity: .9; margin-bottom: 14px; position: relative; z-index: 1; }
+  .summary-cta p {
+    font-size: 15px; font-weight: 600; line-height: 1.75;
+    position: relative; z-index: 1;
+    max-width: 600px; margin: 0 auto;
+  }
+
+  /* ===== TOMORROW ===== */
+  .tomorrow {
+    text-align: center;
+    margin-top: 24px;
+    padding: 24px;
+    background: var(--card);
+    border: 1px dashed #c8d6e5;
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+  }
+  .tomorrow::after {
+    content: '';
+    position: absolute;
+    top: -20px; left: -20px;
+    width: 80px; height: 80px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    opacity: .5;
+  }
+  .tomorrow .mini-pill {
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent-deep);
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .05em;
+    padding: 3px 12px; border-radius: 99px;
+    margin-bottom: 8px;
+    position: relative; z-index: 1;
+  }
+  .tomorrow p { font-size: 14px; color: var(--text-light); font-weight: 500; position: relative; z-index: 1; }
+
+  .footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: #b0c4d8;
+  }
+
+  .section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin: 0 0 8px;
+    opacity: .2;
+  }
+  .section-divider span {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .section-divider span:nth-child(2) { width: 6px; height: 6px; opacity: .7; }
+  .section-divider span:nth-child(3) { width: 4px; height: 4px; opacity: .5; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .insight-block, .scenario-grid { grid-template-columns: 1fr; }
+    .reuse-grid, .check-grid { grid-template-columns: 1fr; }
+    .hero-section h1 { font-size: 21px; }
+    .hero-section .intro { text-align: left; padding: 14px 16px; }
+    .template-demo .flow { gap: 4px; }
+    .template-demo .flow .step { font-size: 11px; padding: 4px 10px; }
+  }
+  @media (min-width: 641px) and (max-width: 850px) {
+    .insight-block, .scenario-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo-placeholder" title="质量管理部 LOGO 放置位">质量<br>管理部</div>
+</div>
+
+<div class="container">
+
+  <!-- ==================== HERO ==================== -->
+  <div class="hero-section">
+    <span class="hero-emoji">📐</span>
+    <h1>AI 应用为什么需要标准模板？</h1>
+    <div class="intro">
+      <p style="margin-bottom:8px;">在使用 AI 的过程中，很多人都有类似体验：</p>
+      <p>第一次让 AI 帮忙整理内容，结果看起来还不错；<br>第二次处理类似任务，输出格式却变了；<br>第三次再使用时，重点又和前两次不一样。</p>
+      <p style="margin-top:8px;">于是就会出现一个问题：</p>
+      <p style="color:var(--accent);font-weight:600;">AI 明明能帮忙，为什么总感觉不够稳定？</p>
+      <p>其中一个重要原因，就是<strong>缺少标准模板</strong>。对于真正想落地的 AI 应用来说，标准模板不是可有可无的格式要求，而是让 AI 稳定输出、持续复用、方便验证的重要基础。</p>
+    </div>
+    <div class="core-quote" style="margin-top:16px;">
+      模板不是为了限制 AI，而是为了让 AI 更可靠地完成工作。
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 一、没有模板，AI 容易自由发挥 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <span class="num">1</span>
+      <h2>没有模板，AI 容易自由发挥</h2>
+      <p>日常使用 AI 时，我们经常会输入一些比较宽泛的指令。</p>
+    </div>
+    <div class="quote-list">
+      <div class="quote-item">"帮我整理一下。"</div>
+      <div class="quote-item">"帮我分析一下。"</div>
+      <div class="quote-item">"帮我写一份报告。"</div>
+      <div class="quote-item">"帮我总结一下会议内容。"</div>
+    </div>
+    <p style="font-size:14px;color:var(--text-mid);line-height:1.75;">
+      这些指令本身没有错，AI 也通常能给出回答。但问题在于，<strong>如果没有明确模板，AI 并不知道你真正想要的交付形式是什么</strong>——它可能这次输出一段文字总结，下次输出分点清单，再下次写成一篇完整报告。
+    </p>
+    <div class="insight-block">
+      <div class="insight-card">
+        <span class="ic-emoji">📝</span>
+        <p>格式不统一，后续还要人工调整</p>
+      </div>
+      <div class="insight-card">
+        <span class="ic-emoji">🔍</span>
+        <p>重点不固定，容易遗漏关键信息</p>
+      </div>
+      <div class="insight-card">
+        <span class="ic-emoji">📊</span>
+        <p>内容颗粒度不一致，不方便横向比较</p>
+      </div>
+    </div>
+    <div class="insight-summary">
+      如果 AI 只是偶尔帮你"聊一聊""写一写"，模板不是必须的。<br>
+      但如果希望 AI <strong>长期处理某类固定任务</strong>，标准模板就非常重要。
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 二、模板让 AI 输出更稳定 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <span class="num">2</span>
+      <h2>模板让 AI 输出更稳定</h2>
+      <p>一个成熟的 AI 应用，首先要清楚最终交付什么。同样是"整理质量问题"，交付物不同，AI 的处理方式也不同。</p>
+    </div>
+    <div class="scenario-grid">
+      <div class="scenario-card">
+        <span class="sc-label">交付物 A</span>
+        <h3>周报</h3>
+        <p>重点：本周问题进展、风险状态和下周计划</p>
+      </div>
+      <div class="scenario-card">
+        <span class="sc-label">交付物 B</span>
+        <h3>复盘报告</h3>
+        <p>重点：问题背景、原因分析、改善措施和经验沉淀</p>
+      </div>
+      <div class="scenario-card">
+        <span class="sc-label">交付物 C</span>
+        <h3>风险清单</h3>
+        <p>重点：风险等级、影响范围、责任人和跟进状态</p>
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--text-mid);line-height:1.75;margin-top:16px;">
+      模板的第一个价值，就是<strong>告诉 AI 这次任务最后要交付什么</strong>。它把一句模糊的"帮我整理一下"，变成一个明确的输出要求：<strong>"请按照固定结构，生成一份质量问题复盘报告。"</strong>
+    </p>
+    <p style="font-size:14px;color:var(--text-mid);line-height:1.75;margin-top:8px;">
+      当交付物明确之后，AI 的输出就会更接近实际工作需要。
+    </p>
+
+    <!-- 7-step template demo -->
+    <div class="template-demo" style="margin-top:16px;">
+      <p style="text-align:center;font-size:14px;color:var(--text-mid);font-weight:600;">质量复盘模板示例（7 段式）</p>
+      <div class="flow">
+        <span class="step">问题背景</span><span class="arr">→</span>
+        <span class="step">问题现象</span><span class="arr">→</span>
+        <span class="step">影响范围</span><span class="arr">→</span>
+        <span class="step">原因分析</span><span class="arr">→</span>
+        <span class="step">改善措施</span><span class="arr">→</span>
+        <span class="step">验证结果</span><span class="arr">→</span>
+        <span class="step">经验沉淀</span>
+      </div>
+      <p class="demo-note">即使每次输入的项目、问题、资料不同，AI 也能输出结构统一、格式规范的结果。</p>
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 三、模板让内容更容易复用 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <span class="num">3</span>
+      <h2>模板让内容更容易复用</h2>
+      <p>AI 生成内容的价值，不应该只停留在"看一眼"。真正有价值的 AI 输出，应该能够继续进入工作流程。</p>
+    </div>
+    <div class="reuse-grid">
+      <div class="reuse-item">
+        <div class="ri-icon blue">📋</div>
+        <span>周报内容可以直接放进项目汇报</span>
+      </div>
+      <div class="reuse-item">
+        <div class="ri-icon blue">📧</div>
+        <span>会议纪要可以发给参会人员确认</span>
+      </div>
+      <div class="reuse-item">
+        <div class="ri-icon blue">📌</div>
+        <span>风险清单可以进入项目跟进表</span>
+      </div>
+      <div class="reuse-item">
+        <div class="ri-icon blue">🗂️</div>
+        <span>问题复盘可以归档到质量案例库</span>
+      </div>
+      <div class="reuse-item">
+        <div class="ri-icon blue">✅</div>
+        <span>行动计划可以转化为任务分工</span>
+      </div>
+      <div class="reuse-item">
+        <div class="ri-icon blue">📚</div>
+        <span>经验总结可以沉淀为知识库内容</span>
+      </div>
+    </div>
+    <div class="highlight-box">
+      如果输出遵循标准模板，内容就更容易被<strong>复制、归档、统计、检索和二次加工</strong>。这也是 AI 从"聊天工具"走向"工作工具"的关键一步。
+    </div>
+  </div>
+
+  <div class="section-divider"><span></span><span></span><span></span></div>
+
+  <!-- ==================== 四、模板让效果更容易验证和优化 ==================== -->
+  <div class="section">
+    <div class="section-hd">
+      <span class="num">4</span>
+      <h2>模板让效果更容易验证和优化</h2>
+      <p>AI 做得好不好，不能只凭感觉。有了标准模板，就可以逐项检查输出质量。</p>
+    </div>
+    <div class="check-grid">
+      <div class="check-item"><span class="ci">✓</span> 内容是否完整？</div>
+      <div class="check-item"><span class="ci">✓</span> 信息提取是否准确？</div>
+      <div class="check-item"><span class="ci">✓</span> 重点是否突出？</div>
+      <div class="check-item"><span class="ci">✓</span> 措施是否可执行？</div>
+      <div class="check-item"><span class="ci">✓</span> 格式是否符合要求？</div>
+      <div class="check-item"><span class="ci">✓</span> 是否减少人工修改时间？</div>
+    </div>
+    <div class="verify-conclusion">
+      模板不仅能规范输出，还能帮助我们持续优化 AI 应用。<br>
+      <span style="font-size:13px;color:var(--text-light);">没有模板，问题往往停留在"感觉不太好"。有了模板，问题可以被定位、被修正、被迭代。</span>
+    </div>
+  </div>
+
+  <!-- ==================== CONCLUSION ==================== -->
+  <div class="conclusion-block">
+    <p style="font-size:17px;font-weight:750;color:var(--text);text-align:center;margin-bottom:16px;">结语：模板是 AI 应用稳定落地的基础</p>
+    <p>AI 的优势是理解、生成、总结和推理。但在工作场景中，我们不只需要 AI "能回答"，更需要它<strong>"稳定交付"</strong>。</p>
+    <p>这就需要标准模板。标准模板可以让 AI 明确交付物，让输出结果更加稳定，让内容更容易复用，也让效果更方便验证。</p>
+  </div>
+
+  <!-- ==================== SUMMARY ==================== -->
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>AI 应用需要标准模板，是为了让输出更稳定、内容更可复用、效果更可验证。模板不是限制 AI，而是让 AI 更可靠地完成工作。</p>
+  </div>
+
+  <!-- ==================== TOMORROW ==================== -->
+  <div class="tomorrow">
+    <span class="mini-pill">下期预告</span>
+    <p>一个好的 Skill 应该长什么样？</p>
+    <p style="font-size:12px;color:#b0c4d8;margin-top:6px;">每日 AI 趣味小知识持续更新，解锁更多 AI 实用干货～</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 模板化指南 · 质量管理部</footer>
+
+</body>
+</html>
