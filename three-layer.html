@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 应用设计的三层结构：场景、流程、工具</title>
+<style>
+  :root {
+    --accent: #6366f1;
+    --accent-deep: #4f46e5;
+    --accent-light: #eef2ff;
+    --accent-grad: linear-gradient(140deg, #6366f1 0%, #818cf8 50%, #a5b4fc 100%);
+    --teal: #0ea5a0;
+    --amber: #f59e0b;
+    --bg: #f8f9fe;
+    --card: #ffffff;
+    --text: #181a2c;
+    --text-mid: #3a3f5c;
+    --text-light: #636888;
+    --border: #e4e7f2;
+    --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.05), 0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.03);
+    --radius: 12px; --radius-lg: 18px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg)}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(99,102,241,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(129,140,248,.03) 0%,transparent 50%);
+    background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh;
+  }
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#d8daf0 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #c8cce0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0a8c0;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(24px,4vw,34px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #c7d2fe;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#d4d8f0,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .section-hd .desc{font-size:15px;color:var(--text-mid);margin-top:6px;line-height:1.7}
+
+  /* LAYER CARDS */
+  .layer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .layer-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px 18px;text-align:center;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;border-top:4px solid}
+  .layer-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .layer-card:nth-child(1){border-top-color:var(--accent)}
+  .layer-card:nth-child(2){border-top-color:var(--teal)}
+  .layer-card:nth-child(3){border-top-color:var(--amber)}
+  .layer-card .lc-icon{font-size:28px;margin-bottom:8px;display:block}
+  .layer-card h3{font-size:16px;font-weight:750;margin-bottom:6px}
+  .layer-card .lc-q{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:8px}
+  .layer-card p{font-size:13px;color:var(--text-light);line-height:1.6}
+  .layer-card .lc-tip{margin-top:10px;font-size:12px;color:#b91c1c;background:#fef5f5;padding:4px 10px;border-radius:5px;display:inline-block;font-weight:600}
+
+  /* INFO BLOCK */
+  .info-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow-xs);margin-top:14px}
+  .info-block h3{font-size:16px;font-weight:750;margin-bottom:10px}
+  .info-block ul{list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--text-mid);line-height:1.6}
+  .info-block ul li{padding-left:18px;position:relative}
+  .info-block ul li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+  /* TOOL TABLE */
+  .tool-tbl{width:100%;border-collapse:collapse;font-size:14px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-xs)}
+  .tool-tbl thead th{background:#f6f8fb;padding:10px 14px;text-align:left;font-weight:700;font-size:12px;color:var(--text);border-bottom:1px solid var(--border)}
+  .tool-tbl tbody td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text-mid);line-height:1.5;background:var(--card)}
+  .tool-tbl tbody tr{transition:background .2s}
+  .tool-tbl tbody tr:hover td{background:#fafbfe}
+  .tool-tbl tbody tr:last-child td{border-bottom:none}
+  .tool-tbl tbody td:first-child{font-weight:700;color:var(--accent-deep)}
+
+  /* EXAMPLE TABLE */
+  .ex-table{width:100%;border-collapse:collapse;font-size:14px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-xs)}
+  .ex-table thead th{background:#f6f8fb;padding:10px 14px;text-align:left;font-weight:700;font-size:12px;color:var(--text);border-bottom:1px solid var(--border)}
+  .ex-table thead th:first-child{width:15%}
+  .ex-table tbody td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text-mid);line-height:1.6;background:var(--card);font-size:14px}
+  .ex-table tbody tr{transition:background .2s}
+  .ex-table tbody tr:hover td{background:#fafbfe}
+  .ex-table tbody tr:last-child td{border-bottom:none}
+  .ex-table tbody td:first-child{font-weight:700;font-size:16px;text-align:center;color:var(--accent-deep)}
+
+  /* TIPS */
+  .tip-line{font-size:14px;color:var(--text-mid);line-height:1.7;padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #c7d2fe;text-align:center;margin-top:14px}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #c8cce0;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b0b8d0;position:relative;z-index:1}
+  @media(max-width:640px){.layer-grid{grid-template-columns:1fr}.hero-section h1{font-size:21px}.ex-table{font-size:12px}.ex-table thead th,.ex-table tbody td{padding:8px 10px}}
+  @media(min-width:641px) and (max-width:850px){.layer-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🏗️</span>
+    <h1>AI 应用设计的三层结构：场景、流程、工具</h1>
+    <p class="sub">设计一个能落地的 AI 应用，从这三层开始就够了</p>
+    <span class="core">场景定边界 · 流程定路径 · 工具定能力</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一、为什么需要分层 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🤔 第一部分</div>
+      <h2>为什么需要分层？</h2>
+    </div>
+    <p style="font-size:15px;color:var(--text-mid);line-height:1.8;">
+      很多人设计 AI 应用时，思路是乱的——一会儿纠结 prompt 怎么写，一会儿又跳到工具怎么对接，最后发现拼出来的东西要么跑不稳，要么别人没法用。
+    </p>
+    <p style="font-size:15px;color:var(--text-mid);line-height:1.8;margin-top:8px;">
+      分层的目的很简单：<strong>把"做什么""怎么做""用什么做"拆开，一次只关注一件事。</strong>先定场景 → 再定流程 → 最后定工具。像搭积木一样，一层一层来。
+    </p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二、三层拆解 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🧱 第二部分</div>
+      <h2>三层结构拆解</h2>
+    </div>
+    <div class="layer-grid">
+      <div class="layer-card">
+        <span class="lc-icon">🎯</span>
+        <h3>第一层：场景</h3>
+        <div class="lc-q">什么时候？谁用？解决什么？</div>
+        <p>场景是底座，回答"AI 在什么情况下被触发"。场景清晰的标准：随便找个人看完就知道什么时候用、能得到什么。</p>
+        <span class="lc-tip">常见错误：写得太宽</span>
+      </div>
+      <div class="layer-card">
+        <span class="lc-icon">🔄</span>
+        <h3>第二层：流程</h3>
+        <div class="lc-q">从输入到输出，中间经过哪几步？</div>
+        <p>每步有明确动作和判断标准，一般 3~7 步刚好。太少了拆得不够，太多了场景可能太大。</p>
+        <span class="lc-tip">常见错误：流程跳步</span>
+      </div>
+      <div class="layer-card">
+        <span class="lc-icon">🔧</span>
+        <h3>第三层：工具</h3>
+        <div class="lc-q">每一步需要什么能力？</div>
+        <p>大模型能搞定的就不用额外工具。只有大模型做不到的（读文件、发邮件），才需要引入外部工具。</p>
+        <span class="lc-tip">常见错误：贪多求全</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三、场景层 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🎯 第三部分</div>
+      <h2>第一层详解：场景</h2>
+      <p class="desc">回答三个问题：什么时候触发？谁来用？要解决什么问题？</p>
+    </div>
+    <div class="info-block">
+      <h3>场景清晰的标准</h3>
+      <ul>
+        <li><strong>窄到能直接对应一个操作</strong>，如"每周五生成项目进度报告"，而不是"提高工作效率"</li>
+        <li><strong>触发的时机和方式明确</strong>——是自动定时运行，还是用户手动发起？</li>
+        <li><strong>使用者明确</strong>——一个人用还是团队共用？新手上手需要多少门槛？</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四、流程层 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🔄 第四部分</div>
+      <h2>第二层详解：流程</h2>
+      <p class="desc">场景定了"做什么"，流程回答"怎么做"。每步有明确动作，关键步骤有判断节点。</p>
+    </div>
+    <div class="info-block">
+      <h3>流程设计的要点</h3>
+      <ul>
+        <li><strong>步骤 3~7 步刚好：</strong>太少说明拆得不够细，太多说明场景可能太大了</li>
+        <li><strong>每步有明确动作：</strong>不说"分析一下"，要说"提取关键数据并计算同比变化"</li>
+        <li><strong>关键步骤有判断节点：</strong>在容易出错的地方加检查点，满足条件才继续</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 五、工具层 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🔧 第五部分</div>
+      <h2>第三层详解：工具</h2>
+      <p class="desc">流程定了路径，工具负责让每一步有办法执行。</p>
+    </div>
+    <table class="tool-tbl">
+      <thead><tr><th>步骤类型</th><th>需要的工具能力</th></tr></thead>
+      <tbody>
+        <tr><td>读取信息</td><td>文件读取、API 调用、数据库查询</td></tr>
+        <tr><td>分析判断</td><td>大模型推理、规则匹配、计算对比</td></tr>
+        <tr><td>生成内容</td><td>大模型生成、模板填充</td></tr>
+        <tr><td>对外输出</td><td>写入文档、发送消息、更新系统</td></tr>
+      </tbody>
+    </table>
+    <div class="tip-line">够用就好，不贪多。大模型自己能搞定的，不额外接工具；只有大模型做不到的才引入外部工具。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 六、完整实例 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">📐 第六部分</div>
+      <h2>三层如何协作：完整实例</h2>
+      <p class="desc">以"每周项目进度报告生成"为例</p>
+    </div>
+    <table class="ex-table">
+      <thead><tr><th>层级</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td>场景</td><td>每周五 17:00，项目经理触发，AI 自动生成本周项目进度报告，直接可粘贴到汇报文档</td></tr>
+        <tr><td>流程</td><td>① 拉取本周任务数据 → ② 对比上周计划，标记完成/延期项 → ③ 识别延期风险并标注原因 → ④ 生成进度报告初稿</td></tr>
+        <tr><td>工具</td><td>第①步：调用项目管理 API 获取数据；第②③步：大模型推理判断；第④步：模板填充生成文档</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>设计 AI 应用不用想得太复杂——<strong>先把场景边界定清楚，再把处理流程拆明白，最后给每步配上合适的工具</strong>。三层到位，落地就不远了。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>上下文窗口很宝贵，怎么高效地喂给 AI 信息？</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 应用设计指南 · 质量管理部</footer>
+
+</body>
+</html>
