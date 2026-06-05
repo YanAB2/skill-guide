@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上下文窗口很宝贵，怎么高效地喂给 AI 信息？</title>
+<style>
+  :root {
+    --accent: #8b5cf6;
+    --accent-deep: #6d28d9;
+    --accent-light: #f5f3ff;
+    --accent-grad: linear-gradient(140deg, #8b5cf6 0%, #a78bfa 50%, #c4b5fd 100%);
+    --teal: #0ea5a0;
+    --amber: #f59e0b;
+    --rose: #ec4899;
+    --bg: #fafafe;
+    --card: #ffffff;
+    --text: #1a1830;
+    --text-mid: #3d3860;
+    --text-light: #6b6590;
+    --border: #e8e6f2;
+    --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.05), 0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.03);
+    --radius: 12px; --radius-lg: 18px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(139,92,246,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(167,139,250,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#ddd8f0 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #d0cce0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a8a0c0;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(24px,4vw,34px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #ddd6fe;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#dcd8f0,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .section-hd .desc{font-size:15px;color:var(--text-mid);margin-top:6px;line-height:1.7}
+  .text-block{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:12px}
+
+  /* PITFALL CARDS */
+  .pitfall-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .pitfall-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;border-top:4px solid}
+  .pitfall-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .pitfall-card:nth-child(1){border-top-color:var(--rose)}
+  .pitfall-card:nth-child(2){border-top-color:var(--amber)}
+  .pitfall-card:nth-child(3){border-top-color:var(--accent)}
+  .pitfall-card .pc-num{font-size:28px;margin-bottom:6px;display:block}
+  .pitfall-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+  .pitfall-card p{font-size:13px;color:var(--text-light);line-height:1.6}
+
+  /* DOS AND DONTS */
+  .do-table{width:100%;border-collapse:collapse;font-size:14px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-xs)}
+  .do-table thead th{background:#f8f6fb;padding:10px 14px;text-align:left;font-weight:700;font-size:12px;color:var(--text);border-bottom:1px solid var(--border)}
+  .do-table tbody td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text-mid);line-height:1.55;background:var(--card)}
+  .do-table tbody tr{transition:background .2s}
+  .do-table tbody tr:hover td{background:#fafafe}
+  .do-table tbody tr:last-child td{border-bottom:none}
+  .do-table .do{color:#059669;font-weight:700}
+  .do-table .dont{color:#dc2626;font-weight:700}
+
+  /* PRINCIPLE CARDS */
+  .principle-list{display:flex;flex-direction:column;gap:10px}
+  .principle-item{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .principle-item:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .principle-item .pi{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+  .principle-item:nth-child(1) .pi{background:var(--accent)}
+  .principle-item:nth-child(2) .pi{background:var(--teal)}
+  .principle-item:nth-child(3) .pi{background:var(--amber)}
+  .principle-item:nth-child(4) .pi{background:var(--rose)}
+  .principle-item .pi-text{flex:1;font-size:14px;color:var(--text-mid);line-height:1.65}
+  .principle-item .pi-text strong{color:var(--text)}
+
+  /* COMPARE */
+  .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .cmp-box{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-xs)}
+  .cmp-box.bad{border-left:4px solid #fca5a5;background:#fffaf9}
+  .cmp-box.good{border-left:4px solid #6ee7b7;background:#f9fdfb}
+  .cmp-box .cmp-tag{font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:5px;margin-bottom:8px;display:inline-block}
+  .cmp-box.bad .cmp-tag{background:#fef2f2;color:#b91c1c}
+  .cmp-box.good .cmp-tag{background:#ecfdf5;color:#065f46}
+  .cmp-box p{font-size:14px;color:var(--text-mid);line-height:1.7;font-family:"SF Mono","Cascadia Code","Consolas",monospace;font-style:italic}
+  .cmp-result{font-size:13px;color:var(--text-light);margin-top:8px}
+  .tip-block{margin-top:14px;font-size:14px;color:var(--text-mid);padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #ddd6fe;text-align:center;line-height:1.7}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #d0cce0;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b8b0d0;position:relative;z-index:1}
+  @media(max-width:640px){.pitfall-grid,.cmp-grid{grid-template-columns:1fr}.hero-section h1{font-size:21px}.do-table{font-size:12px}}
+  @media(min-width:641px) and (max-width:850px){.pitfall-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🪟</span>
+    <h1>上下文窗口很宝贵，怎么高效地喂给 AI 信息？</h1>
+    <p class="sub">窗口就那么大，别让废话占座</p>
+    <span class="core">喂得精，AI 表现精准；喂得乱，AI 抓不住重点</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一、是什么 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🤔 第一部分</div>
+      <h2>上下文窗口是什么？为什么它很宝贵？</h2>
+    </div>
+    <p class="text-block">
+      AI 在当前对话中能参考的信息总量有上限，包括用户输入、历史对话、AI 回复、系统提示词和工具返回的信息等。这个上限就是"上下文窗口"。
+    </p>
+    <p class="text-block">
+      它更像一个<strong>限量版的临时工作台</strong>，而不是长期记忆库。模型本身并没有"记住"或"忘掉"的意愿——当前可处理的信息容量有限。超出窗口的内容，AI 通常无法完整参考；部分平台会自动压缩、截断或通过检索补充，但不能依赖这种机制。
+    </p>
+    <p class="text-block">
+      所以窗口有多大，直接决定了 AI 在一次对话中能同时参考多少信息。
+    </p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二、三个浪费习惯 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">💸 第二部分</div>
+      <h2>三个最浪费窗口的习惯，看看你中了几个？</h2>
+    </div>
+    <div class="pitfall-grid">
+      <div class="pitfall-card">
+        <span class="pc-num">1</span>
+        <h3>把上下文当网盘用</h3>
+        <p>把几十页文档原文贴进去说"帮我总结"——可能占用大量上下文，挤掉后续追问需要空间。后续追问时 AI 无法完整引用前文，准确性会下降。</p>
+      </div>
+      <div class="pitfall-card">
+        <span class="pc-num">2</span>
+        <h3>事无巨细全丢进去</h3>
+        <p>"去年三月小李还在，后来小李走了换成了小王……"——这些信息有多少是 AI 真正需要知道的？把八卦当上下文，浪费的是自己的输出质量。</p>
+      </div>
+      <div class="pitfall-card">
+        <span class="pc-num">3</span>
+        <h3>一条消息塞十个任务</h3>
+        <p>"帮我写周报，顺便总结会议纪要，审需求文档，给三个标题方案"——任务越多，目标、材料和输出标准越容易混杂，结果越不稳定。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三、四步法 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🧠 第三部分</div>
+      <h2>高效喂信息的四步法</h2>
+    </div>
+
+    <p style="font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:16px;"><strong>第一步：先分类，再投喂</strong>——不是所有信息都需要进窗口。喂之前先问自己：这条信息是 AI 完成任务必不可少的吗？</p>
+    <table class="do-table">
+      <thead><tr><th>应该放进窗口的</th><th>不该放进窗口的</th></tr></thead>
+      <tbody>
+        <tr><td class="do">任务的核心要求</td><td class="dont">和任务无关的背景闲聊</td></tr>
+        <tr><td class="do">必要的参考数据</td><td class="dont">重复的、已说过的内容</td></tr>
+        <tr><td class="do">格式和约束条件</td><td class="dont">啰嗦的个人感言</td></tr>
+      </tbody>
+    </table>
+    <div class="tip-block">有价值放进窗口的关键信息，最好明确指定具体来源（文档名、章节、页码或关键词），避免遗漏。</div>
+
+    <p style="font-size:15px;color:var(--text-mid);line-height:1.8;margin-top:20px;margin-bottom:8px;"><strong>第二步：结构化地给，不要无序地塞</strong></p>
+    <p class="text-block">有结构的信息，AI 两步就能定位；散乱的信息，AI 得通篇扫描之后再猜你想干嘛——猜对了还好，猜错了整段输出白费。</p>
+
+    <p style="font-size:15px;color:var(--text-mid);line-height:1.8;margin-top:20px;margin-bottom:8px;"><strong>第三步：利用外部存储，窗口只放当前所需</strong></p>
+    <p class="text-block">完整文档存在知识库里，通过工具按需检索；窗口里只放当前任务需要的关键信息。就像你不会把整个图书馆搬到书桌上。不过要注意：工具检索并非总是完整准确，关键任务最好明确指定文档、章节或关键词，减少检索遗漏。</p>
+
+    <p style="font-size:15px;color:var(--text-mid);line-height:1.8;margin-top:20px;margin-bottom:8px;"><strong>第四步：分批次交互，长任务分段执行</strong></p>
+    <p class="text-block">一个复杂的多步骤任务，不要试图一条 prompt 搞定。拆成几段交互，每段聚焦一个子任务。这样每一步都能得到完整的注意力。</p>
+    <div class="tip-block">精简不等于删掉关键细节。像合同审查、代码排错这类高风险任务，需要保留原文依据和关键上下文，不能为了省窗口而省略核心信息。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四、对比 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">⚡ 第四部分</div>
+      <h2>一个对比：喂得好 vs 喂得差</h2>
+    </div>
+    <div class="cmp-grid">
+      <div class="cmp-box bad">
+        <span class="cmp-tag">喂得差</span>
+        <p>"帮我分析一下市场数据，对了上次小李说的那个客户的情况你也看一下，还有这是去年的报告你可以参考。哦对了先帮我总结一下整体情况然后看看哪几个客户有问题最后再给我一个建议方案。详细一点哈。"</p>
+        <p class="cmp-result">结果：AI 重点不清，可能只分析了前两项，后面全丢了。</p>
+      </div>
+      <div class="cmp-box good">
+        <span class="cmp-tag">喂得好</span>
+        <p>"分析以下三家客户的 Q2 数据（附数据表），按三部分输出：①各客户表现对比 ②异常数据标注 ③跟进建议各一条。"</p>
+        <p class="cmp-result">结果：任务清晰，信息精准，输出可控。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>上下文窗口是 AI 最稀缺的资源。<strong>信息投喂四步法：先砍掉不必要的，再结构化工整地喂，外部存储按需检索，能分段执行的绝不一口气塞。</strong>窗口省一点，结果好一截。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>上线只是开始：Skill 用起来之后，怎么持续改进</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 效率指南 · 质量管理部</footer>
+
+</body>
+</html>
