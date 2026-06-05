@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上线只是开始：Skill 用起来之后，怎么持续改进？</title>
+<style>
+  :root {
+    --accent: #e8833a;
+    --accent-deep: #c96a2a;
+    --accent-light: #fff6f0;
+    --accent-grad: linear-gradient(140deg, #f08548 0%, #e0673a 50%, #d44a3a 100%);
+    --teal: #2d9d8e;
+    --teal-light: #eafaf7;
+    --amber: #f0a050;
+    --amber-light: #fef8f0;
+    --bg: #fefaf6;
+    --card: #ffffff;
+    --text: #2d2a28;
+    --text-mid: #5c5651;
+    --text-light: #8a827a;
+    --border: #f0e8df;
+    --border-warm: #f5e4d2;
+    --shadow-xs: 0 1px 3px rgba(120,80,40,.03);
+    --shadow-sm: 0 2px 8px rgba(120,80,40,.04);
+    --shadow-md: 0 4px 16px rgba(120,80,40,.06), 0 1px 4px rgba(120,80,40,.03);
+    --shadow-lg: 0 12px 36px rgba(120,80,40,.08), 0 4px 12px rgba(120,80,40,.04);
+    --radius: 14px; --radius-lg: 20px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 100% 100% at 0% 35%,rgba(240,133,72,.04) 0%,transparent 55%),radial-gradient(ellipse 80% 80% at 100% 60%,rgba(240,160,80,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#e8ddd0 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #e0d6c8;display:flex;align-items:center;justify-content:center;font-size:10px;color:#b8a898;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(24px,4vw,34px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #f5d5bb;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#e8d5c0,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .section-hd .desc{font-size:15px;color:var(--text-mid);margin-top:6px;line-height:1.7}
+  .text-p{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:12px}
+
+  /* PAIN CARDS */
+  .pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .pain-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;border-top:4px solid}
+  .pain-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .pain-card:nth-child(1){border-top-color:#ef4444}
+  .pain-card:nth-child(2){border-top-color:var(--amber)}
+  .pain-card:nth-child(3){border-top-color:var(--teal)}
+  .pain-card .pc-num{font-size:28px;margin-bottom:6px;display:block}
+  .pain-card p{font-size:13px;color:var(--text-light);line-height:1.6}
+
+  /* HABIT CARDS */
+  .habit-list{display:flex;flex-direction:column;gap:10px}
+  .habit-item{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .habit-item:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .habit-item .hi{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+  .habit-item:nth-child(1) .hi{background:var(--accent)}
+  .habit-item:nth-child(2) .hi{background:var(--teal)}
+  .habit-item:nth-child(3) .hi{background:var(--amber)}
+  .habit-item .hi-text{flex:1;font-size:14px;color:var(--text-mid);line-height:1.65}
+  .habit-item .hi-text strong{color:var(--text)}
+
+  /* DECISION TABLE */
+  .dec-tbl{width:100%;border-collapse:collapse;font-size:14px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-xs)}
+  .dec-tbl thead th{background:#fdf8f4;padding:10px 14px;text-align:left;font-weight:700;font-size:12px;color:var(--text);border-bottom:1px solid var(--border)}
+  .dec-tbl thead th:first-child{width:45%}
+  .dec-tbl tbody td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text-mid);line-height:1.55;background:var(--card)}
+  .dec-tbl tbody tr{transition:background .2s}
+  .dec-tbl tbody tr:hover td{background:#fffdfb}
+  .dec-tbl tbody tr:last-child td{border-bottom:none;background:#fffdfb;font-weight:600}
+  .dec-tbl .action{font-weight:700}
+  .dec-tbl .action.minor{color:var(--teal)}
+  .dec-tbl .action.medium{color:var(--amber)}
+  .dec-tbl .action.major{color:#dc2626}
+
+  /* TIP BLOCK */
+  .tip-blk{margin-top:14px;text-align:center;font-size:14px;color:var(--text-mid);padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #f5d5bb;line-height:1.7}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #e0d3bf;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--amber-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#c8bfb5;position:relative;z-index:1}
+  @media(max-width:640px){.pain-grid{grid-template-columns:1fr}.hero-section h1{font-size:21px}.dec-tbl{font-size:12px}}
+  @media(min-width:641px) and (max-width:850px){.pain-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🔁</span>
+    <h1>上线只是开始：Skill 用起来之后，怎么持续改进</h1>
+    <p class="sub">写完就扔？那它永远只是个半成品</p>
+    <span class="core">第一次跑通只是及格，越用越顺手才叫好用</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一、别把跑通当终点 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🏁 第一部分</div>
+      <h2>别把"跑通了"当终点</h2>
+    </div>
+    <p class="text-p">第一次看到自己的 Skill 顺利跑出结果，那种"嘿，它真的听懂了"的成就感，很容易让人以为这事就结束了。</p>
+    <p class="text-p">然后你会发现：第三次用的时候输出歪了，第五次用的场景和第一次不完全一样，第十次用的时候你已经在心里默默嫌弃它了——但你已经懒得改了。</p>
+    <p class="text-p">这就是 Skill 最普遍的命运：<strong>写得快、用得上、慢慢烂。</strong></p>
+    <p class="text-p">问题不在于你写得不好，而在于你把"能跑"当成了"做好"。其实你只需要一件很简单的事：<strong>每次用完，花 30 秒扫一眼，记一条值得改的点。</strong>不用立刻动手改，但这条记录就是你的改进清单。</p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二、三种不对劲 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🔍 第二部分</div>
+      <h2>用着用着，你会发现这三种不对劲</h2>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <span class="pc-num">1</span>
+        <p><strong>每次都补同一句话。</strong>比如每次你都要额外说"用表格形式输出"，说明模板里缺了这个约束。补上就行。</p>
+      </div>
+      <div class="pain-card">
+        <span class="pc-num">2</span>
+        <p><strong>某次没按套路输入，它就崩了。</strong>你以为输入格式永远规整，实际某天累了随便贴了一段话，它就理解歪了。要么补示例，要么加容错逻辑。</p>
+      </div>
+      <div class="pain-card">
+        <span class="pc-num">3</span>
+        <p><strong>改它的动力消失了。</strong>因为改一次要测试、调试、反复跑，觉得不如自己手搓。降低修改的心理负担——简化测试流程，存版本方便回退。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三、三个习惯 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🛠️ 第三部分</div>
+      <h2>三个随手可做的改进习惯</h2>
+    </div>
+    <div class="habit-list">
+      <div class="habit-item">
+        <div class="hi">1</div>
+        <div class="hi-text"><strong>建一个"待改进"便签。</strong>每次用完 Skill，脑子里闪过"要是它能顺便把 XX 也做了就好了"，花 10 秒记下来。攒到 5 条，找 15 分钟集中改一轮。</div>
+      </div>
+      <div class="habit-item">
+        <div class="hi">2</div>
+        <div class="hi-text"><strong>每次只改一个点。</strong>不要一打开就开始大修——"既然改都改了，顺便把这也调一下"。一次改一个点，改完跑三个测试确认没坏。一次改太多，出了 bug 你根本不知道是哪步导致的。</div>
+      </div>
+      <div class="habit-item">
+        <div class="hi">3</div>
+        <div class="hi-text"><strong>大改之前先存个历史版本。</strong>把当前能跑的版本复制一份保存。改崩了也不用慌，回退重新来。就像打游戏存档——死了从上个存档继续，不用从第一关重来。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四、决策表 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">⚖️ 第四部分</div>
+      <h2>什么时候小修，什么时候重做？</h2>
+    </div>
+    <table class="dec-tbl">
+      <thead><tr><th>情况</th><th>怎么做</th></tr></thead>
+      <tbody>
+        <tr><td>偶尔一次输出跑偏</td><td class="action">先不急着改，看看是不是输入本身有问题</td></tr>
+        <tr><td>同一类信息每次都要手动补充</td><td class="action minor">小修：把约束写进模板</td></tr>
+        <tr><td>某个流程步骤跳过或遗漏</td><td class="action minor">小修：加检查点</td></tr>
+        <tr><td>用了几周发现核心场景变了</td><td class="action medium">中修：调整流程结构</td></tr>
+        <tr><td>输出质量时好时坏、排不出规律</td><td class="action major">大修：拆分或缩小场景</td></tr>
+        <tr><td>觉得跟手搓差不多，不想用了</td><td class="action major">大修或放弃：精简或承认不值得</td></tr>
+      </tbody>
+    </table>
+    <div class="tip-blk"><strong>底线规则：</strong>改完的结果，不能比改之前更差。不确定的话，先拿三个真实案例跑一遍对比。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 五、生命周期 ===== -->
+  <div class="section">
+    <div class="section-hd">
+      <div class="emoji-label">🪴 第五部分</div>
+      <h2>什么时候该停下来？Skill 也有生命周期</h2>
+    </div>
+    <p class="text-p">不是所有 Skill 都需要无限迭代。场景消失了、需求变了、或者你发现自己其实不需要它了——这都很正常。</p>
+    <p class="text-p">判断标准很简单：<strong>这周你用了它几次？每次省了多少时间？</strong>如果答案趋近于零，那就大胆停掉它，别愧疚。把精力留给更值得的 Skill。</p>
+    <p class="text-p">Skill 是你给自己写的工具，不是你对自己的承诺。好用的留下，不好用的改，改不动的就放手。</p>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>Skill 的持续改进不靠意志力，靠习惯：<strong>每次用完扫一眼、好的记一条、坏的改一个点、大改前先存档、不好用了就停掉。</strong>不是让它变完美，是让它越用越顺手。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>从会用 AI 到用好 AI：思维方式的三个转变</p>
+  </div>
+
+</div>
+
+<footer class="footer">Skill 进阶指南 · 质量管理部</footer>
+
+</body>
+</html>
