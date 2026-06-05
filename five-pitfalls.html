@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 应用开发中最容易踩的五个坑</title>
+<style>
+  :root {
+    --accent: #0ea5a0;
+    --accent-deep: #0d8c87;
+    --accent-light: #f0fdfc;
+    --accent-grad: linear-gradient(140deg, #0ea5a0 0%, #14b8a6 50%, #5eead4 100%);
+    --warn: #f59e0b;
+    --rose: #ec4899;
+    --bg: #fafcfb;
+    --card: #ffffff;
+    --text: #1a2625;
+    --text-mid: #3d504d;
+    --text-light: #6b807b;
+    --border: #e4ece9;
+    --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.05), 0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.03);
+    --radius: 14px; --radius-lg: 20px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(14,165,160,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(94,234,212,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#d4e8e4 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #c8dcd6;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0b8b0;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(24px,4vw,34px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #b2ece8;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#d0e0da,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+
+  /* PITFALL CARDS */
+  .pitfall-list{display:flex;flex-direction:column;gap:14px;margin-top:20px}
+  .pitfall{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px 24px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;border-left:4px solid}
+  .pitfall:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .pitfall:nth-child(1){border-left-color:#ef4444}
+  .pitfall:nth-child(2){border-left-color:var(--warn)}
+  .pitfall:nth-child(3){border-left-color:#3b82f6}
+  .pitfall:nth-child(4){border-left-color:var(--accent)}
+  .pitfall:nth-child(5){border-left-color:var(--rose)}
+  .pitfall .pf-hd{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .pitfall .pf-hd .pf-icon{font-size:28px;line-height:1}
+  .pitfall .pf-hd h3{font-size:17px;font-weight:750;color:var(--text)}
+  .pitfall .pf-body{font-size:14px;color:var(--text-mid);line-height:1.75}
+  .pitfall .pf-body p{margin-bottom:8px}
+  .pitfall .pf-body .label-sm{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;display:inline-block;padding:2px 8px;border-radius:4px;margin-right:6px}
+  .pitfall .pf-body .label-symptom{background:#fef2f2;color:#b91c1c}
+  .pitfall .pf-body .label-why{background:#fefce8;color:#92400e}
+  .pitfall .pf-body .label-fix{background:#f0fdf4;color:#065f46}
+  .pitfall .pf-quote{margin-top:10px;font-size:13px;color:var(--accent-deep);background:var(--accent-light);padding:8px 14px;border-radius:var(--radius-sm);border:1px solid #b2ece8;line-height:1.5}
+
+  /* LEAD-IN */
+  .lead-in{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:18px}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #c8dcd6;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b0c8c0;position:relative;z-index:1}
+  @media(max-width:640px){.hero-section h1{font-size:21px}.pitfall{padding:18px 16px}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🕳️</span>
+    <h1>AI 应用开发中最容易踩的五个坑</h1>
+    <p class="sub">踩过不丢人，但同一个坑踩两次就亏了</p>
+    <span class="core">大部分 Skill 不好用，不是 AI 能力不行，而是设计的时候就埋下了雷</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <div class="pitfall-list">
+
+    <!-- 坑 1 -->
+    <div class="pitfall">
+      <div class="pf-hd"><span class="pf-icon">🌍</span><h3>场景贪大 — "我这个 Skill 要解决所有问题"</h3></div>
+      <div class="pf-body">
+        <p><span class="label-sm label-symptom">症状</span> 打开 prompt 一看，开头就是"你是一个全能的 XX 助手，帮我处理 XX 相关的所有事情"。</p>
+        <p><span class="label-sm label-why">原因</span> 场景越大，边界越模糊，AI 越不知道你到底要什么。最后它会按照自己的理解自由发挥——发挥得倒是挺流畅，但跟你想要的完全不是一回事。</p>
+        <p><span class="label-sm label-fix">怎么绕过去</span> 先只解决一个具体问题。不是"帮我管理项目"，而是"每周五生成本周进度报告"。跑稳一个再扩展。</p>
+      </div>
+      <div class="pf-quote">Skill 跟菜刀一样——先切好一种菜，再想着开饭店。</div>
+    </div>
+
+    <!-- 坑 2 -->
+    <div class="pitfall">
+      <div class="pf-hd"><span class="pf-icon">🤷</span><h3>没有验收标准 — "感觉还行吧……"</h3></div>
+      <div class="pf-body">
+        <p><span class="label-sm label-symptom">症状</span> 问自己"怎么判断这个 Skill 好不好用？"答："跑出来看着没问题就行。"</p>
+        <p><span class="label-sm label-why">原因</span> "看着没问题"是最危险的标准——它什么都能过，也什么都能放过。用了三周之后突然发现某个关键信息一直缺失，但你从来没注意到。</p>
+        <p><span class="label-sm label-fix">怎么绕过去</span> 定 3 条硬指标：内容完整度（必备字段不能缺）、格式一致性（每次输出结构相同）、人工修改量（从输出到可用花的时间是否在缩短）。</p>
+      </div>
+      <div class="pf-quote">不定义"什么叫好"，就永远不知道"哪里不好"。</div>
+    </div>
+
+    <!-- 坑 3 -->
+    <div class="pitfall">
+      <div class="pf-hd"><span class="pf-icon">🍲</span><h3>Prompt 写了一锅粥 — "把我的要求全塞进去就对了"</h3></div>
+      <div class="pf-body">
+        <p><span class="label-sm label-symptom">症状</span> prompt 越写越长，一开始 3 行，一周后 15 行，一个月后 40 行。里面有角色设定、任务描述、输出格式、注意事项、额外提醒、追加说明、特别强调、再强调一遍……</p>
+        <p><span class="label-sm label-why">原因</span> AI 会认真读你的 prompt，但它没有能力判断哪条指令的优先级更高。你给了 10 条要求，后 3 条可能直接被忽略——而且被忽略的往往是你觉得最重要的那 3 条。</p>
+        <p><span class="label-sm label-fix">怎么绕过去</span> 拆开。角色设定单独放，任务说明简洁写，输出模板结构化给，约束条件分类列。复杂任务拆成两步做比一步做效果好得多。</p>
+      </div>
+      <div class="pf-quote">prompt 像调料，放多了不是更香，是更难吃。</div>
+    </div>
+
+    <!-- 坑 4 -->
+    <div class="pitfall">
+      <div class="pf-hd"><span class="pf-icon">🏊</span><h3>只用一条案例测试就满意 — "跑通一次就是稳了"</h3></div>
+      <div class="pf-body">
+        <p><span class="label-sm label-symptom">症状</span> 用一组理想数据跑通了一次，就觉得开发完成。第二天换了个稍微不一样的输入，输出直接翻车。</p>
+        <p><span class="label-sm label-why">原因</span> 你自己设计数据当然会按你预设的格式来。但实际使用中，输入可能是半截子话、群里复制过来的、夹杂大量无关信息。理想数据只能证明 Skill 在最完美的情况下能工作——而这个完美情况可能永远不会出现。</p>
+        <p><span class="label-sm label-fix">怎么绕过去</span> 至少跑 3 种测试数据：标准的验证核心能力，残缺的验证容错能力，跑偏的验证边界意识和拒绝能力。</p>
+      </div>
+      <div class="pf-quote">只测理想数据的 Skill 就像一个只练过标准泳姿的人——扔进大海第一秒就呛水。</div>
+    </div>
+
+    <!-- 坑 5 -->
+    <div class="pitfall">
+      <div class="pf-hd"><span class="pf-icon">🪴</span><h3>做完就不管了 — "反正能跑了，还要怎样"</h3></div>
+      <div class="pf-body">
+        <p><span class="label-sm label-symptom">症状</span> 跑通一次就扔那儿。一周后发现输出开始变形，一个月后干脆自己也不用了，但懒得排查是哪个环节的问题。</p>
+        <p><span class="label-sm label-why">原因</span> 使用习惯在变、输入内容在变、场景需求在变。Skill 变差的过程没有任何提醒，等你意识到不对劲，它已经烂得不想修了。</p>
+        <p><span class="label-sm label-fix">怎么绕过去</span> 低成本维护。一周花 2 分钟扫一眼最近的输出，一个月花 10 分钟整体检查。手机便签里记条"待改进"列表，随手记随手改。</p>
+      </div>
+      <div class="pf-quote">Skill 跟盆栽一样——不浇水不会立刻死，但等你发现叶子黄了，根已经枯了一大半。</div>
+    </div>
+
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>五个坑的核心诱因只有一条：<strong>把"做出来"当成了"做好了"</strong>。场景贪大是没想清楚到底做什么，没有验收标准是没想清楚什么叫好，prompt 一锅粥是没想清楚怎么组织指令，只测一条是没想清楚怎么验证，做完不管了是没想清楚 Skill 是需要持续打磨的工具。在设计上多花半小时，在修修补补上省下五十小时。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>任务规划与执行的关系：规划阶段想的，执行阶段可能全变了</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 避坑指南 · 质量管理部</footer>
+
+</body>
+</html>
