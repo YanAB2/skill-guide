@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>任务规划与执行：计划不是剧本，而是参照系</title>
+<style>
+  :root {
+    --accent: #3b82f6;
+    --accent-deep: #1d4ed8;
+    --accent-light: #eff6ff;
+    --accent-grad: linear-gradient(140deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%);
+    --teal: #0ea5a0;
+    --amber: #f59e0b;
+    --rose: #ec4899;
+    --bg: #f7f9fc;
+    --card: #ffffff;
+    --text: #131e2e;
+    --text-mid: #2e3f55;
+    --text-light: #52647a;
+    --border: #e2e8f2;
+    --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.05), 0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.03);
+    --radius: 14px; --radius-lg: 20px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(59,130,246,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(96,165,250,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#d0ddf5 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #c0cfe0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0b4cc;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(23px,3.8vw,32px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #bfdbfe;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#d0ddf5,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .text-p{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:10px}
+
+  /* DEVIATION CARDS */
+  .dev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .dev-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;border-top:4px solid}
+  .dev-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .dev-card:nth-child(1){border-top-color:var(--accent)}
+  .dev-card:nth-child(2){border-top-color:var(--amber)}
+  .dev-card:nth-child(3){border-top-color:var(--rose)}
+  .dev-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+  .dev-card p{font-size:13px;color:var(--text-light);line-height:1.6}
+
+  /* CHECKLIST */
+  .cl-list{display:flex;flex-direction:column;gap:10px}
+  .cl-item{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .cl-item:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .cl-item .cli{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+  .cl-item:nth-child(1) .cli{background:var(--accent)}
+  .cl-item:nth-child(2) .cli{background:var(--teal)}
+  .cl-item:nth-child(3) .cli{background:var(--amber)}
+  .cl-item .cli-text{flex:1;font-size:14px;color:var(--text-mid);line-height:1.65}
+  .cl-item .cli-text strong{color:var(--text)}
+
+  /* CALIBRATION */
+  .cal-block{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-xs)}
+  .cal-block p{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:6px}
+  .cal-block p:last-child{margin-bottom:0}
+
+  /* HIGHLIGHT BOX */
+  .hl-box{margin-top:14px;text-align:center;font-size:14px;color:var(--text-mid);padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #bfdbfe;line-height:1.7}
+  .hl-highlight{margin-top:14px;text-align:center;font-size:14px;color:#991b1b;padding:14px 18px;background:#fef5f5;border-radius:var(--radius-sm);border:1px solid #fecaca;line-height:1.7}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #c0cfe0;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b0c4d8;position:relative;z-index:1}
+  @media(max-width:640px){.dev-grid{grid-template-columns:1fr}.hero-section h1{font-size:20px}}
+  @media(min-width:641px) and (max-width:850px){.dev-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🗺️</span>
+    <h1>任务规划与执行：计划不是剧本，而是参照系</h1>
+    <p class="sub">规划的价值，不是按图施工，而是跑偏后知道怎么拉回来</p>
+    <span class="core">做一个能帮你判断偏差、快速调整的参照系，才是规划真正该干的事</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一、计划不一样 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🗺️ 第一部分</div><h2>你写的计划，落地时从来不会一模一样</h2></div>
+    <p class="text-p">你打开地图，路线干干净净：A 点到 B 点，直线距离 3 公里，预计 10 分钟。上路之后发现：修路绕行、红绿灯坏了、导航突然让你调头——地图上根本看不出来。</p>
+    <p class="text-p">AI 任务也是这样。你规划"自动生成本周项目进度报告"，列好了四步：① 拉取 JIRA 本周任务数据 ② 筛选已完成和延期的条目 ③ 按模块分组汇总 ④ 填入报告模板输出。实际执行时，第二步就卡住了——JIRA 返回的任务状态字段名跟你预想的不一样，"已完成"对应的是 "Done" 还是 "Closed"？你不得不多加一步字段映射。</p>
+    <p class="text-p">这不一定是规划错了，而是规划和执行之间天然就隔着一层。你在白板上画一条直线，没人能在泥地里走出一样的轨迹。所以计划的作用不是让你照着走，而是让你在走偏的时候，能看清偏了多少、该往哪拉。</p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二、三种偏差 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">⚠️ 第二部分</div><h2>规划阶段最常出现的三种偏差</h2></div>
+    <div class="dev-grid">
+      <div class="dev-card">
+        <h3>步骤顺序需调整</h3>
+        <p>你计划先查 A 再查 B 做交叉分析。实际 B 拿不到，得先用 A 筛出范围再查 C。步骤顺序全变了，但目标还是那个目标。</p>
+      </div>
+      <div class="dev-card">
+        <h3>子任务难度被低估</h3>
+        <p>"提取关键信息"预计花 10% 力气，结果输入文本乱七八糟，光清洗就耗掉一半时间。步骤没变，难度判断全偏了。</p>
+      </div>
+      <div class="dev-card">
+        <h3>工具输出不可控</h3>
+        <p>调了搜索工具，返回结果牛头不对马嘴。调了文件读取工具，它把附件漏了。工具帮你省事，但输出不完全可控。</p>
+      </div>
+    </div>
+    <p class="text-p" style="margin-top:14px;text-align:center;">三种偏差指向同一件事：<strong>你不可能在规划阶段预判所有变数，所以重点不是消灭偏差，而是快速识别和响应。</strong></p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三、三步操作清单 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">📋 第三部分</div><h2>怎么让规划变成一个好用的参照系？</h2></div>
+    <div class="cl-list">
+      <div class="cl-item">
+        <div class="cli">1</div>
+        <div class="cli-text"><strong>把"步骤清单"升级为"目标 + 条件"。</strong>不要写"第一步做什么，第二步做什么"，改成写"这一步要达成的目标是什么，达成它需要满足什么条件"。执行时围绕目标和条件灵活调整路线，步骤只是参考，条件和目标才是锚点。</div>
+      </div>
+      <div class="cl-item">
+        <div class="cli">2</div>
+        <div class="cli-text"><strong>每个关键步骤预留一个备选。</strong>不是让你写完整的 Plan B，而是花一秒钟问自己：如果这步走不通，我大概能换什么？想过了就有谱，没想过就会慌。</div>
+      </div>
+      <div class="cl-item">
+        <div class="cli">3</div>
+        <div class="cli-text"><strong>把第一次执行当摸底，不当验收。</strong>第一次跑完的结果，不要评价"计划写得好不好"，而是判断"计划离现实有多远"。把偏差记下来，下一次规划就自动更准。好的参照系都是从跑偏数据里改出来的。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四、偏差判断 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🎯 第四部分</div><h2>执行中跑偏了，先问一个关键问题</h2></div>
+    <div class="hl-highlight"><strong>这个偏差，影响目标了吗？</strong></div>
+    <p class="text-p" style="margin-top:12px;">大多数偏差只是路径偏离，不是方向丢失。步骤顺序换了但目标还能达成，那就继续走，不需要纠偏。只有当偏差会导致目标无法达成时，才需要介入。</p>
+    <p class="text-p">如果确实需要纠偏，分两步走：</p>
+    <p class="text-p"><strong>第一步：关键条件不满足，果断换路径。</strong>某一步完全卡死了、连备选都走不通，不要硬扛。停在这一步，重新判断——目标要不要调整？还是换一条完全不同的执行路径？</p>
+    <p class="text-p"><strong>第二步：把偏差记进参照系。</strong>这次出现的问题，就是下次规划最值钱的输入。你在这一步低估了多少难度、漏掉了什么条件、哪个工具的返回值跟预期不一样——记下来，下次至少多留 50% 的余量。参照系就是这么一轮一轮变准的。</p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 五、校准系统 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">📡 第五部分</div><h2>把参照系升级为校准系统</h2></div>
+    <p class="text-p">当你积累了几轮规划-执行-纠偏的记录之后，你手里就不再只是一个个分散的计划了，而是一套<strong>校准系统</strong>。</p>
+    <div class="cal-block">
+      <p><strong>预判：</strong>规划新任务时，你知道哪类步骤容易低估、哪种工具输出不稳定，提前多留余量。</p>
+      <p><strong>响应：</strong>执行中跑偏了，你能快速判断——这是"换个步骤就好"的小偏差，还是"目标本身可能需要调整"的大问题。</p>
+      <p><strong>沉淀：</strong>每次执行完，偏差自动入库，下一次规划起点更高。</p>
+    </div>
+    <div class="hl-box">规划、执行、校准——三步构成一个持续逼近现实的闭环。计划不是一次成型的产品，而是越用越准的导航系统。</div>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>规划和执行的关系不是"先写好再照做"，而是<strong>写一份作为参照系，跑起来之后根据实际情况随时调整，跑完再把偏差反哺回下一版规划</strong>。几轮下来，参照系升级为校准系统——你规划得不一定更细，但一定更准。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>从个人技能到团队技能：你的 Skill 怎么让别人也能用</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 规划与执行指南 · 质量管理部</footer>
+
+</body>
+</html>
