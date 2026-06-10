@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从个人技能到团队技能：你的 Skill 怎么让别人也能用</title>
+<style>
+  :root {
+    --accent: #6366f1;
+    --accent-deep: #4f46e5;
+    --accent-light: #eef2ff;
+    --accent-grad: linear-gradient(140deg, #6366f1 0%, #818cf8 50%, #a5b4fc 100%);
+    --teal: #0ea5a0;
+    --amber: #f59e0b;
+    --bg: #f8f9fe;
+    --card: #ffffff;
+    --text: #181a2c;
+    --text-mid: #3a3f5c;
+    --text-light: #636888;
+    --border: #e4e7f2;
+    --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.05), 0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.03);
+    --radius: 14px; --radius-lg: 20px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(99,102,241,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(129,140,248,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#d8daf0 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #c8cce0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0a8c0;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(23px,3.8vw,32px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #c7d2fe;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#d4d8f0,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .text-p{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:10px}
+
+  /* FOUR ITEMS */
+  .four-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .four-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 18px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;border-left:4px solid}
+  .four-card:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .four-card:nth-child(1){border-left-color:var(--accent)}
+  .four-card:nth-child(2){border-left-color:var(--teal)}
+  .four-card:nth-child(3){border-left-color:var(--amber)}
+  .four-card:nth-child(4){border-left-color:#ec4899}
+  .four-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+  .four-card p{font-size:13px;color:var(--text-light);line-height:1.6}
+
+  /* HIGHLIGHT */
+  .hl-box{margin-top:14px;font-size:14px;color:var(--text-mid);padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #c7d2fe;line-height:1.7;text-align:center}
+
+  /* PROBLEM CARDS */
+  .prob-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .prob-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-xs)}
+  .prob-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+  .prob-card p{font-size:13px;color:var(--text-light);line-height:1.6;margin-bottom:6px}
+  .prob-card .sol{font-size:13px;color:var(--accent-deep);font-weight:600}
+
+  /* CHECKLIST */
+  .cl-grid{display:flex;flex-direction:column;gap:8px}
+  .cl-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .cl-item:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .cl-item .chk{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#d1fae5;color:#059669;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .cl-item p{font-size:14px;color:var(--text-mid);line-height:1.5;flex:1}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #c8cce0;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b0b8d0;position:relative;z-index:1}
+  @media(max-width:640px){.four-grid,.prob-grid{grid-template-columns:1fr}.hero-section h1{font-size:20px}}
+  @media(min-width:641px) and (max-width:850px){.four-grid,.prob-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🤝</span>
+    <h1>从个人技能到团队技能：你的 Skill 怎么让别人也能用</h1>
+    <p class="sub">能自己用是省事，能被复用才是资产</p>
+    <span class="core">差的往往不是更复杂的技术，而是一份清楚的说明</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一、墙 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🧱 第一部分</div><h2>自己用好和能被复用，中间隔着一堵墙</h2></div>
+    <p class="text-p">一个你自己调了十次的 Skill，在你手里行云流水：你知道输入该长什么样、哪些字段可省略、哪种边界情况忽略就好。这些知识是你反复调试积累下来的，但它全部存在你的脑子里，没有写进 Skill。</p>
+    <p class="text-p">于是这个 Skill 就变成了"只有你能开的那辆车"——离合器松到哪个位置不会熄火，只有你知道。换个人来开，第一脚就熄了。对 Skill 来说，这个"离合器位置"就是那些没有写出来的输入习惯、判断标准和异常处理经验。</p>
+    <p class="text-p">很多时候，能被复用的 Skill 和私房 Skill 的区别，不只在能力，更在使用门槛。把那些你脑子里知道的、但 Skill 里没写的东西补进去，门槛就降下来了。</p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二、四类说明 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">📋 第二部分</div><h2>可复用 Skill 需要具备的四类说明</h2></div>
+    <div class="four-grid">
+      <div class="four-card">
+        <h3>使用场景说明</h3>
+        <p>一句话讲清楚——什么时候用？解决什么问题？放在最开头，打开就知道该不该用。</p>
+      </div>
+      <div class="four-card">
+        <h3>输入规范说明</h3>
+        <p>输入包含哪些字段？格式要求是什么？哪些必填、哪些可省略？不写清楚，输入质量就高度依赖使用者的经验。</p>
+      </div>
+      <div class="four-card">
+        <h3>输出模板说明</h3>
+        <p>直接给出期望的输出结构。输出长什么样，决定输入该怎么准备——比如输出需要结论和依据，输入中就必须提供背景和目标。</p>
+      </div>
+      <div class="four-card">
+        <h3>边界说明</h3>
+        <p>哪些输入会导致异常？哪些场景处理不了？遇到时应该补充什么信息、改用什么格式，最好一起写清楚。</p>
+      </div>
+    </div>
+    <div class="hl-box">这四样东西不一定要写得很长，但一定要写清楚。它们决定了一个 Skill 是"一次性工具"，还是"可复用资产"。<br>好的 Skill 不只是执行逻辑，也是使用说明——既要让模型知道怎么做，也要让使用者知道怎么用。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三、复用后的问题 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">⚠️ 第三部分</div><h2>说明书写好之后，还会遇到什么问题？</h2></div>
+    <p class="text-p">说明书补齐之后，Skill 才算具备了被复用的基础。但真正进入复用阶段后，还会出现两个新问题：</p>
+    <div class="prob-grid">
+      <div class="prob-card">
+        <h3>用户遇到卡点后，不反馈，直接放弃使用</h3>
+        <p>不是 Skill 不好，而是没人有义务主动反馈。不知道怎么开始、第一次就卡住——反馈的心理门槛太高了。</p>
+        <p class="sol">主动问一句：用了没？哪里卡住了？一条有效反馈，往往就能推动一次小迭代。</p>
+      </div>
+      <div class="prob-card">
+        <h3>Skill 更新了，但版本说明和使用习惯没有同步</h3>
+        <p>你改了输入格式、调整了输出模板，但说明没更新。用旧格式输入得到错误输出，被默认为"这东西不稳定"。</p>
+        <p class="sol">只要改动影响使用方式、输入格式或输出结果，就应该记录版本变化——改了哪里、什么时候改的。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四、自检 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">✅ 第四部分</div><h2>一个可复用 Skill 的四条自检标准</h2></div>
+    <div class="cl-grid">
+      <div class="cl-item"><span class="chk">1</span><p>一个不了解背景的人，能在 1 分钟内知道这个 Skill 是干嘛的</p></div>
+      <div class="cl-item"><span class="chk">2</span><p>照着输入规范说明填数据，能跑出正常结果</p></div>
+      <div class="cl-item"><span class="chk">3</span><p>输入略有偏差时，Skill 能纠正、追问，或给出明确错误提示，而不是直接输出异常结果</p></div>
+      <div class="cl-item"><span class="chk">4</span><p>能在 30 秒内根据输出结构和验收标准，判断结果是否合格</p></div>
+    </div>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>从个人工具到可复用资产，关键不是把 Skill 做得更复杂，而是把<strong>使用场景、输入规范、输出模板和边界说明</strong>写清楚。把这些补上，Skill 才能从你脑子里的经验，变成别人手里的工具。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>能用就行？先跑通，再跑顺：第一个版本别追求完美，先看 AI 能不能走完流程</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 复用指南 · 质量管理部</footer>
+
+</body>
+</html>
