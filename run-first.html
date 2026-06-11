@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>能用就行？先跑通，再跑顺</title>
+<style>
+  :root {
+    --accent: #0ea5a0; --accent-deep: #0d8c87; --accent-light: #f0fdfc;
+    --accent-grad: linear-gradient(140deg, #0ea5a0 0%, #14b8a6 50%, #5eead4 100%);
+    --yellow: #eab308; --red: #ef4444;
+    --bg: #fafcfb; --card: #ffffff; --text: #1a2625; --text-mid: #3d504d; --text-light: #6b807b;
+    --border: #e4ece9; --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04); --shadow-md: 0 4px 16px rgba(0,0,0,.05),0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.03);
+    --radius: 14px; --radius-lg: 20px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box} html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(14,165,160,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(94,234,212,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#d4e8e4 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #c8dcd6;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0b8b0;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(23px,3.8vw,32px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #b2ece8;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#d0e0da,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .text-p{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:10px}
+
+  /* CHECK LINES */
+  .check-lines{display:flex;flex-direction:column;gap:10px}
+  .check-line{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .check-line:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .check-line .cl-num{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+  .check-line:nth-child(1) .cl-num{background:var(--accent)}
+  .check-line:nth-child(2) .cl-num{background:#0ea5a0}
+  .check-line:nth-child(3) .cl-num{background:#14b8a6}
+  .check-line p{font-size:14px;color:var(--text-mid);line-height:1.6;flex:1}
+
+  /* BLOCK / NON-BLOCK */
+  .bn-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bn-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-xs)}
+  .bn-card.block{border-left:4px solid var(--red)}
+  .bn-card.nonblock{border-left:4px solid var(--yellow)}
+  .bn-card h3{font-size:15px;font-weight:700;margin-bottom:10px}
+  .bn-card ul{list-style:none;font-size:13px;color:var(--text-light);line-height:1.8}
+  .bn-card ul li::before{content:'•';margin-right:6px;font-weight:700}
+  .bn-card.block ul li::before{color:var(--red)}
+  .bn-card.nonblock ul li::before{color:var(--yellow)}
+
+  /* IMPROVE STEPS */
+  .imp-list{display:flex;flex-direction:column;gap:10px}
+  .imp-item{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .imp-item:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .imp-item .ii{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+  .imp-item:nth-child(1) .ii{background:var(--accent)}
+  .imp-item:nth-child(2) .ii{background:#0ea5a0}
+  .imp-item:nth-child(3) .ii{background:#14b8a6}
+  .imp-item .ii-text{flex:1;font-size:14px;color:var(--text-mid);line-height:1.6}
+
+  .hl-box{margin-top:14px;text-align:center;font-size:14px;color:var(--text-mid);padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #b2ece8;line-height:1.7}
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #c8dcd6;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b0c8c0;position:relative;z-index:1}
+  @media(max-width:640px){.bn-grid{grid-template-columns:1fr}.hero-section h1{font-size:20px}}
+  @media(min-width:641px) and (max-width:850px){.bn-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🏃</span>
+    <h1>能用就行？先跑通，再跑顺</h1>
+    <p class="sub">V1 的目标不是惊艳，是跑完</p>
+    <span class="core">跑通了才有东西可改，跑不通连可以改的东西都没有</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">⚡ 第一部分</div><h2>第一个版本最容易犯的错：边跑边修</h2></div>
+    <p class="text-p">很多人做第一个版本时，心态是这样的：让 AI 跑一次，发现输出格式不对，改 prompt。再跑一次，发现少了一个分析维度，加一段指令。再跑一次，又觉得语气不够正式，再调……来回改了七八轮，Skill 才跑完第一次完整流程。这不是在开发，这是在用调试的心态做第一版。</p>
+    <p class="text-p">第一版应该反过来：<strong>先不管输出好不好，先看它能不能走完。</strong>格式歪了没关系，分析浅了没关系，语气不对也没关系——这些全记下来，但别在第一次就改。第一次只要一件事：AI 有没有从输入走到输出的完整流程？有，第一版就成功了。</p>
+    <p class="text-p">你需要的不是一次完美的输出，而是一条完整的流水线。流水线有了，每个环节的问题可以一个一个修。流水线没有，你修的都是空中楼阁。</p>
+    <div class="hl-box">V1 不是上线即完美，而是验证流程闭环。跑通之后，再基于真实输出逐轮优化。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">✔️ 第二部分</div><h2>怎么判断"跑通了"？三条及格线</h2></div>
+    <div class="check-lines">
+      <div class="check-line"><div class="cl-num">1</div><p><strong>AI 完整执行了所有步骤。</strong>流程里有 5 步，AI 就走完了 5 步。没有跳过、卡住、停在中间。即使某一步的输出质量不高，它至少走过去了。</p></div>
+      <div class="check-line"><div class="cl-num">2</div><p><strong>输出包含了所有必备结构。</strong>不是内容好不好，而是段落、标题、字段有没有。比如你要求输出包含三个部分——三个都出现了，就算内容不精准，结构完整就算及格。</p></div>
+      <div class="check-line"><div class="cl-num">3</div><p><strong>整个过程不需要人工中途介入。</strong>不需要第三步停下来手动修正、不需要重跑、不需要临时补充说明。从头到尾一次跑完，不中断。</p></div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🔍 第三部分</div><h2>跑通之后，先做一件事：区分阻塞问题和非阻塞问题</h2></div>
+    <p class="text-p">跑通不等于可以交付使用。拿到第一次完整输出后，把发现的问题分成两类：</p>
+    <div class="bn-grid">
+      <div class="bn-card block">
+        <h3>阻塞问题 —— 必须先修</h3>
+        <ul><li>步骤缺失、流程中断</li><li>关键字段为空</li><li>输出严重偏离主题</li><li>结果无法被后续环节使用</li></ul>
+      </div>
+      <div class="bn-card nonblock">
+        <h3>非阻塞问题 —— 先记录，后优化</h3>
+        <ul><li>格式不够美观</li><li>语气不够正式</li><li>分析深度不足</li><li>语言表达不够精炼</li></ul>
+      </div>
+    </div>
+    <div class="hl-box">先清零阻塞问题，让 Skill 达到"最低限度可用"。再逐条清理非阻塞问题，让 Skill 越来越好。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">📈 第四部分</div><h2>怎么从"能用"到"好用"？</h2></div>
+    <div class="imp-list">
+      <div class="imp-item"><div class="ii">1</div><div class="ii-text"><strong>记下所有"能跑但不满意"的地方。</strong>哪些字段内容太空泛？哪个分析步骤跳太快？哪些地方你每次都想手动改一下？全部列出来。</div></div>
+      <div class="imp-item"><div class="ii">2</div><div class="ii-text"><strong>按影响排优先级。</strong>先挑那个"不改整个 Skill 价值打折扣"的问题。改完跑一次，确认没新问题，再改下一个。</div></div>
+      <div class="imp-item"><div class="ii">3</div><div class="ii-text"><strong>每改一轮，对比上一轮的输出。</strong>把改前改后的两次输出放一起看。格式确实变整齐了——但有没有顺带把别的东西改坏了？对比一下就知道。</div></div>
+    </div>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>第一版别追求完美，追求"完整"。<strong>先看 AI 能不能把整套流程走完，走通了区分阻塞和非阻塞问题，先清零阻塞，再逐轮优化。</strong>跑通是 1，优化是在 1 后面加 0。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>对 AI 要求太高，对自己要求太低：你都没想清楚要什么，它怎么给你</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 开发指南 · 质量管理部</footer>
+
+</body>
+</html>
