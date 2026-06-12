@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>你给 AI 的例子，就是它的参考答案</title>
+<style>
+  :root {
+    --accent: #0ea5a0; --accent-deep: #0d8c87; --accent-light: #f0fdfc;
+    --accent-grad: linear-gradient(140deg, #0ea5a0 0%, #14b8a6 50%, #5eead4 100%);
+    --amber: #f59e0b; --blue: #3b82f6;
+    --bg: #fafcfb; --card: #ffffff; --text: #1a2625; --text-mid: #3d504d; --text-light: #6b807b;
+    --border: #e4ece9; --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04); --shadow-md: 0 4px 16px rgba(0,0,0,.05),0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.03);
+    --radius: 14px; --radius-lg: 20px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box} html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(14,165,160,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(94,234,212,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#d4e8e4 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #c8dcd6;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0b8b0;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(22px,3.6vw,32px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #b2ece8;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#d0e0da,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .text-p{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:10px}
+
+  /* COMPARE */
+  .cmp-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .cmp-box{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-xs)}
+  .cmp-box.bad{border-left:4px solid #fca5a5;background:#fffaf9}
+  .cmp-box.good{border-left:4px solid #6ee7b7;background:#f9fdfb}
+  .cmp-box .cmp-tag{font-size:11px;font-weight:700;letter-spacing:.04em;padding:3px 10px;border-radius:5px;margin-bottom:8px;display:inline-block}
+  .cmp-box.bad .cmp-tag{background:#fef2f2;color:#b91c1c}
+  .cmp-box.good .cmp-tag{background:#ecfdf5;color:#065f46}
+  .cmp-box p{font-size:14px;color:var(--text-mid);line-height:1.7;font-family:"SF Mono","Cascadia Code","Consolas",monospace;font-style:italic}
+  .cmp-box .detail{font-size:13px;color:var(--text-light);line-height:1.6;margin-top:6px;font-style:normal;font-family:inherit}
+  .hl-box{margin-top:14px;text-align:center;font-size:14px;color:var(--text-mid);padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #b2ece8;line-height:1.7}
+
+  /* ELEMENTS */
+  .elem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .elem-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;border-top:4px solid}
+  .elem-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .elem-card:nth-child(1){border-top-color:var(--accent)}
+  .elem-card:nth-child(2){border-top-color:var(--amber)}
+  .elem-card:nth-child(3){border-top-color:var(--blue)}
+  .elem-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+  .elem-card p{font-size:13px;color:var(--text-light);line-height:1.6}
+
+  /* COMPARE BLOCK */
+  .cmp-block{display:flex;flex-direction:column;gap:12px}
+  .cmp-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs)}
+  .cmp-item h3{font-size:15px;font-weight:700;margin-bottom:8px}
+  .cmp-item .code-block{font-family:"SF Mono","Cascadia Code","Consolas",monospace;font-size:13px;color:var(--text-mid);line-height:1.8;background:#f8faf9;padding:14px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);margin-top:6px}
+
+  /* METHODS */
+  .meth-list{display:flex;flex-direction:column;gap:10px}
+  .meth-item{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .meth-item:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .meth-item .mi{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+  .meth-item:nth-child(1) .mi{background:var(--accent)}
+  .meth-item:nth-child(2) .mi{background:var(--amber)}
+  .meth-item:nth-child(3) .mi{background:var(--blue)}
+  .meth-item .mi-text{flex:1;font-size:14px;color:var(--text-mid);line-height:1.65}
+  .meth-item .mi-text strong{color:var(--text)}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #c8dcd6;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b0c8c0;position:relative;z-index:1}
+  @media(max-width:640px){.cmp-row,.elem-grid{grid-template-columns:1fr}.hero-section h1{font-size:20px}}
+  @media(min-width:641px) and (max-width:850px){.elem-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">📋</span>
+    <h1>你给 AI 的例子，就是它的参考答案</h1>
+    <p class="sub">你喂什么样本，它就学什么风格</p>
+    <span class="core">一个高质量的例子，比一长段抽象指令有效得多</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🧭 第一部分</div><h2>例子是 AI 最强的"导航信号"</h2></div>
+    <p class="text-p">你说"语气要正式一点"——什么是正式？政府公文、商务邮件、学术论文的"正式"完全不同。AI 只能在训练数据里搜索"正式"的平均值，这个平均值可能跟你想要的差很远。</p>
+    <p class="text-p">例子不依赖抽象描述，它直接告诉 AI：<strong>"我要的就是长这样。"</strong> 格式要求 + 判断标准 + 示例，三个东西组合在一起，输出质量才会最大化。其中，例子是最直接的导航——文字告诉它往哪走，例子告诉它走在路上的样子。</p>
+    <p class="text-p" style="font-size:14px;color:var(--text-light);">模型能力、任务复杂度、输入材料同样是影响输出的关键因素。但在这些条件相同的情况下，精准的例子能把输出准确率提升到完全不同的水平。</p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">⚡ 第二部分</div><h2>加不加例子，差距有多大？</h2></div>
+    <div class="cmp-row">
+      <div class="cmp-box bad">
+        <span class="cmp-tag">不加例子</span>
+        <p>"帮我总结这段客户反馈，要简洁明了。"</p>
+        <p class="detail">AI 可能输出三段话、五行字、一个分点列表——每次都不一样。你心里的标准没写进 prompt。</p>
+      </div>
+      <div class="cmp-box good">
+        <span class="cmp-tag">加了例子</span>
+        <p>"请严格按照以下格式输出：<br><br>【问题】一句话核心问题<br>【影响】造成的后果<br>【建议】两条以内改进建议<br><br>示例：【问题】登录页加载超8秒【影响】30%用户放弃登录【建议】①压缩图片 ②启用CDN"</p>
+      </div>
+    </div>
+    <div class="hl-box">加了示例格式后，AI 照着模板填充，输出一致性大幅提升。<strong>写例子花一分钟，后续不用每次手动调整格式。</strong></div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">✅ 第三部分</div><h2>好例子的三个要素</h2></div>
+    <div class="elem-grid">
+      <div class="elem-card"><h3>格式完整</h3><p>不是模糊描述，而是可直接套用的完整结构。表格要有表头列名，列表要有层级符号，段落要规定长度和语气。</p></div>
+      <div class="elem-card"><h3>内容真实</h3><p>最好用真实数据，至少接近真实。真实案例自带完整性，虚构案例可能自带你意识不到的破绽。</p></div>
+      <div class="elem-card"><h3>边界清晰</h3><p>例子里的内容范围就是 AI 默认的输出范围。你不想让它加的维度，例子里就别出现。例子有多规整，输出就有多规整。</p></div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">📐 第四部分</div><h2>好例子 vs 差例子</h2></div>
+    <div class="cmp-block">
+      <div class="cmp-item" style="border-left:4px solid #fca5a5;background:#fffaf9;">
+        <h3 style="color:#b91c1c;">差例子：模糊不完整</h3>
+        <div class="code-block">"请帮我总结以下会议的要点，输出要清晰、简洁、有条理。"<br><br>→ AI 按自己理解的"清晰"生成了一份总结，你总得再改改。</div>
+      </div>
+      <div class="cmp-item" style="border-left:4px solid #6ee7b7;background:#f9fdfb;">
+        <h3 style="color:#065f46;">好例子：格式清晰可套用</h3>
+        <div class="code-block">"请严格按照以下格式总结：<br>一、会议基本信息（时间、地点、参会人、主持人）<br>二、核心议题（议题名称、讨论摘要、结论）<br>三、待办事项（表格：事项、责任人、截止日期）<br>四、下次会议安排"<br><br>→ 每段结构锁定，AI 不需要做任何猜测。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 五 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🛠️ 第五部分</div><h2>怎么随手产出好例子？三个方法</h2></div>
+    <div class="meth-list">
+      <div class="meth-item"><div class="mi">1</div><div class="mi-text"><strong>拿你之前的"最佳版本"当例子。</strong>你过去手动写过的满意邮件、报告、总结——直接放进 prompt 说"按这个格式来"。你的历史产出就是最好的例子库。</div></div>
+      <div class="meth-item"><div class="mi">2</div><div class="mi-text"><strong>先让 AI 跑一版初稿，花 30 秒改成例子。</strong>让 AI 随便生成一个，你把标题、字段、措辞调整到满意版本，下次把这个版本贴回 prompt 开头作为参考答案。</div></div>
+      <div class="meth-item"><div class="mi">3</div><div class="mi-text"><strong>建立"黄金例子库"。</strong>常用输出类型——周报、复盘、纪要、分析——每种保留一个最认可的版本。5~6 个核心例子就能覆盖日常 80% 场景。</div></div>
+    </div>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>例子是提升 AI 输出质量最高效的手段之一——在模型、输入、任务都合理的前提下，<strong>一个格式完整、内容真实、边界清晰的例子</strong>，比一长段抽象文字描述更能直接锁定输出质量。因为它不靠猜，直接给 AI 看"要的就是长这样"。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>把 AI 当成实习生，不是大专家：它能干活，但你得检查</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 技巧指南 · 质量管理部</footer>
+
+</body>
+</html>
