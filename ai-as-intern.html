@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>把 AI 当成实习生，不是大专家</title>
+<style>
+  :root {
+    --accent: #3b82f6; --accent-deep: #1d4ed8; --accent-light: #eff6ff;
+    --accent-grad: linear-gradient(140deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%);
+    --teal: #0ea5a0; --amber: #f59e0b; --rose: #ec4899;
+    --bg: #f7f9fc; --card: #ffffff; --text: #131e2e; --text-mid: #2e3f55; --text-light: #52647a;
+    --border: #e2e8f2; --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04); --shadow-md: 0 4px 16px rgba(0,0,0,.05),0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.03);
+    --radius: 14px; --radius-lg: 20px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box} html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(59,130,246,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(96,165,250,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#d0ddf5 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #c0cfe0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0b4cc;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(22px,3.6vw,32px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #bfdbfe;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#d0ddf5,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .text-p{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:10px}
+
+  /* TRAITS */
+  .trait-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .trait-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 16px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s;border-top:4px solid}
+  .trait-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+  .trait-card:nth-child(1){border-top-color:var(--amber)}
+  .trait-card:nth-child(2){border-top-color:var(--rose)}
+  .trait-card:nth-child(3){border-top-color:var(--accent)}
+  .trait-card h3{font-size:15px;font-weight:700;margin-bottom:6px}
+  .trait-card p{font-size:13px;color:var(--text-light);line-height:1.6}
+
+  /* TIP */
+  .tip-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:14px 18px;font-size:14px;color:var(--text-mid);line-height:1.7;margin-top:12px}
+  .tip-box strong{color:#065f46}
+
+  /* FOUR STEPS */
+  .step-list{display:flex;flex-direction:column;gap:10px}
+  .step-item{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .step-item:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .step-item .si{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+  .step-item:nth-child(1) .si{background:var(--accent)}
+  .step-item:nth-child(2) .si{background:var(--teal)}
+  .step-item:nth-child(3) .si{background:var(--amber)}
+  .step-item:nth-child(4) .si{background:var(--rose)}
+  .step-item .si-text{flex:1;font-size:14px;color:var(--text-mid);line-height:1.65}
+
+  /* CHECK TABLE */
+  .check-tbl{width:100%;border-collapse:collapse;font-size:14px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-xs)}
+  .check-tbl thead th{background:#f6f8fb;padding:10px 14px;text-align:left;font-weight:700;font-size:12px;color:var(--text);border-bottom:1px solid var(--border)}
+  .check-tbl tbody td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text-mid);line-height:1.55;background:var(--card)}
+  .check-tbl tbody tr{transition:background .2s}
+  .check-tbl tbody tr:hover td{background:#fafcfe}
+  .check-tbl tbody tr:last-child td{border-bottom:none}
+
+  /* DIVIDE */
+  .div-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .div-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-xs)}
+  .div-card.green{border-left:4px solid #6ee7b7}
+  .div-card.red{border-left:4px solid #fca5a5}
+  .div-card h3{font-size:15px;font-weight:700;margin-bottom:10px}
+  .div-card p{font-size:13px;color:var(--text-light);line-height:1.7;margin-bottom:6px}
+
+  /* HIGHLIGHT */
+  .hl-box{margin-top:14px;text-align:center;font-size:14px;color:var(--text-mid);padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #bfdbfe;line-height:1.7}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #c0cfe0;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b0c4d8;position:relative;z-index:1}
+  @media(max-width:640px){.trait-grid,.div-grid{grid-template-columns:1fr}.hero-section h1{font-size:20px}}
+  @media(min-width:641px) and (max-width:850px){.trait-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🧑‍💻</span>
+    <h1>把 AI 当成实习生，不是大专家</h1>
+    <p class="sub">交给实习生任务，你不会拿到结果就闭眼签字——AI 也一样</p>
+    <span class="core">一个效率极高、但需要被验证的初级搭档</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🤔 第一部分</div><h2>为什么"实习生心态"比"专家期待"更管用？</h2></div>
+    <p class="text-p">很多人用 AI 的心态是"我雇了一个专家"——什么都能答、什么都能干、输出即成品。但真实体验往往是：第一次用 AI 写报告，洋洋洒洒三段像模像样，往工作群里一贴，同事私聊你："第三段那个数据是哪来的？"回去一查，AI 编的。落差来了——期待越大，失望越大。</p>
+    <p class="text-p">把心态切换到"我带了一个实习生"——它有效率、有基础、往往能完成相当一部分粗活。你给它清晰的指令和范例，它能干到七八成。最后的审核、判断、修正，还是你这个"导师"来做。你不会因为输出不完美而失望——预期是"干完粗活我改"，不是"一步到位直接能用"。实习生把关天经地义，专家你才会放松警惕。</p>
+    <div class="hl-box"><strong>最准确的定位：</strong>一个效率极高、但需要被验证的初级搭档。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">📋 第二部分</div><h2>实习生的三个典型表现——AI 全占了</h2></div>
+    <div class="trait-grid">
+      <div class="trait-card">
+        <h3>能干粗活，但细节不一定对</h3>
+        <p>表格填满了，某行可能填错了数字。报告结构完整，但某个数字可能是编的。在没有明确要求时，AI 往往不会主动标注不确定性。</p>
+      </div>
+      <div class="trait-card">
+        <h3>不一定会主动说自己不会</h3>
+        <p>不主动说"这个我信心不足""这个数据我找不到来源"。最隐蔽的风险：答错的时候和答对的时候看起来一样自信。</p>
+      </div>
+      <div class="trait-card">
+        <h3>指令越清楚，做得越好</h3>
+        <p>"把这件事做一下" vs "按日期排序，红底标逾期项，今晚六点前发我"——出来的结果天差地别。区别在于你对实习生还会多解释两句。</p>
+      </div>
+    </div>
+    <div class="tip-box">
+      <strong>应对技巧：</strong>在指令中明确要求 AI——"请标注哪些结论有数据支撑、哪些是你合理推测、哪些需要我人工核实。"拿到结果时就能快速定位风险点，不用逐行猜哪句是真的。
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🛠️ 第三部分</div><h2>高效协作的四个步骤</h2></div>
+    <div class="step-list">
+      <div class="step-item"><div class="si">1</div><div class="si-text"><strong>派活时说清楚交付标准。</strong>不是"帮我写个东西"，而是"帮我写一份周报，含进度摘要、风险项、下周计划三部分，每部分不超过 5 行"。</div></div>
+      <div class="step-item"><div class="si">2</div><div class="si-text"><strong>给一个参考范例。</strong>一个格式完整的例子，比十行文字指令更有效。第一次花一分钟写范例，后续同类任务复用。</div></div>
+      <div class="step-item"><div class="si">3</div><div class="si-text"><strong>拿到结果后，逐条检查。</strong>不要扫一眼就过了。结构全了吗？数据准了吗？逻辑有没有跳跃？有没有推测的内容？信任但验证。</div></div>
+      <div class="step-item"><div class="si">4</div><div class="si-text"><strong>告诉它问题，让它修正。</strong>漏了字段就指出"请补充风险分析部分，参考以下格式"。它修正比你手动改更快。</div></div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🔍 第四部分</div><h2>不同场景的检查重点</h2></div>
+    <table class="check-tbl">
+      <thead><tr><th>场景</th><th>容易出的问题</th><th>检查重点</th></tr></thead>
+      <tbody>
+        <tr><td>数据汇总分析</td><td>数字编造、计算偏差、数据遗漏</td><td>核对原文数据源，验证数字准确</td></tr>
+        <tr><td>文字总结提炼</td><td>遗漏关键信息、逻辑跳跃、篇幅失控</td><td>对照原文逐条比对</td></tr>
+        <tr><td>格式转换整理</td><td>字段错位、层级混乱、遗漏内容</td><td>检查结构完整性和格式一致性</td></tr>
+        <tr><td>方案或建议生成</td><td>建议空泛、缺少可执行细节</td><td>每条建议是否具体、是否考虑约束</td></tr>
+        <tr><td>代码生成</td><td>边界处理缺失、依赖不明确</td><td>必须执行测试，不能只看代码文本</td></tr>
+      </tbody>
+    </table>
+    <div class="hl-box">拿到输出后，先定位"最可能出错的那个点"——数据类盯数字，总结类盯遗漏，格式类盯结构——先把最脆弱的环节过一遍。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 五 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">⚖️ 第五部分</div><h2>哪些交给 AI？哪些必须自己来？</h2></div>
+    <div class="div-grid">
+      <div class="div-card green">
+        <h3>适合交给 AI</h3>
+        <p>整理原始数据、格式化文档草稿、信息提取归类、标准化重复性工作、模板填充。量大、重复、结构化——往往能搞定大部分，你审核剩余部分。</p>
+      </div>
+      <div class="div-card red">
+        <h3>必须你自己来</h3>
+        <p>最终判断和决策、核心汇报结论、安全合规审核、经验直觉判断。没有标准答案、出错代价高——导师不能缺席。</p>
+      </div>
+    </div>
+    <div class="hl-box">判断标准：如果 AI 做错了，最严重的后果是什么？草稿返工→交给它。影响决策→你复查。涉及法律安全→你自己来，AI 最多当参考资料。</div>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>把 AI 当实习生——<strong>派活给标准，动手前给范例，拿到结果逐条检查，发现错误让它修正。</strong>如果需要更高可靠性，要求它区分已确认事实、合理推测和需人工核实的内容。AI 需要的不是迷信，是验证。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>你对这件事理解多深，AI 就能帮你做多好：AI 放大的是你的认知，不是补你的认知</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 协作指南 · 质量管理部</footer>
+
+</body>
+</html>
