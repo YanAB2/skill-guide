@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 时代最重要的能力之一：快速试错</title>
+<style>
+  :root {
+    --accent: #0ea5a0; --accent-deep: #0d8c87; --accent-light: #f0fdfc;
+    --accent-grad: linear-gradient(140deg, #0ea5a0 0%, #14b8a6 50%, #5eead4 100%);
+    --amber: #f59e0b; --rose: #ec4899; --blue: #3b82f6;
+    --bg: #fafcfb; --card: #ffffff; --text: #1a2625; --text-mid: #3d504d; --text-light: #6b807b;
+    --border: #e4ece9; --shadow-xs: 0 1px 3px rgba(0,0,0,.03);
+    --shadow-sm: 0 2px 8px rgba(0,0,0,.04); --shadow-md: 0 4px 16px rgba(0,0,0,.05),0 1px 4px rgba(0,0,0,.02);
+    --shadow-lg: 0 12px 36px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.03);
+    --radius: 14px; --radius-lg: 20px; --radius-sm: 8px;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box} html{background:var(--bg)}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:radial-gradient(ellipse 70% 60% at 0% 30%,rgba(14,165,160,.04) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 65%,rgba(94,234,212,.03) 0%,transparent 50%);background-color:var(--bg);color:var(--text);line-height:1.82;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,#d4e8e4 .5px,transparent .5px);background-size:40px 40px;opacity:.3;pointer-events:none;z-index:0}
+  .topbar{display:flex;align-items:center;justify-content:space-between;max-width:800px;margin:0 auto;padding:16px 24px;position:relative;z-index:1}
+  .topbar .logo-placeholder{width:40px;height:40px;border-radius:10px;border:2px dashed #c8dcd6;display:flex;align-items:center;justify-content:center;font-size:10px;color:#a0b8b0;text-align:center;line-height:1.3;margin-left:auto;background:rgba(255,255,255,.7);cursor:default}
+  .container{max-width:800px;margin:0 auto;padding:0 24px 60px;position:relative;z-index:1}
+  .hero-section{text-align:center;padding:12px 0 28px}
+  .hero-section .hero-emoji{font-size:52px;margin-bottom:14px;display:block;animation:float 3s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.06)}}
+  .hero-section h1{font-size:clamp(22px,3.6vw,32px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin-bottom:14px}
+  .hero-section .sub{font-size:17px;color:var(--accent-deep);font-weight:650;margin-bottom:14px}
+  .hero-section .core{display:inline-block;background:var(--accent-light);border:1.5px solid #b2ece8;border-radius:99px;padding:8px 26px;font-size:15px;color:var(--accent-deep);font-weight:650}
+  .section-divider{display:flex;align-items:center;justify-content:center;gap:8px;margin:36px 0 8px}
+  .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,#d0e0da,transparent);max-width:120px}
+  .section-divider .dot{width:12px;height:12px;border-radius:50%;background:var(--accent);opacity:.25;display:flex;align-items:center;justify-content:center}
+  .section-divider .dot::after{content:'';width:4px;height:4px;border-radius:50%;background:#fff}
+  .section{margin-top:30px}
+  .section-hd{margin-bottom:18px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section-hd .emoji-label{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em;margin-bottom:4px;text-transform:uppercase}
+  .section-hd h2{font-size:21px;font-weight:750;letter-spacing:-.01em}
+  .text-p{font-size:15px;color:var(--text-mid);line-height:1.8;margin-bottom:10px}
+
+  /* EXAMPLE */
+  .example-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow-xs);margin:12px 0}
+  .example-box p{font-size:14px;color:var(--text-mid);line-height:1.75}
+
+  /* BOUNDARY */
+  .bd-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .bd-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-xs)}
+  .bd-card.green{border-left:4px solid #6ee7b7;background:#f9fdfb}
+  .bd-card.red{border-left:4px solid #fca5a5;background:#fffaf9}
+  .bd-card h3{font-size:15px;font-weight:700;margin-bottom:8px}
+  .bd-card p{font-size:13px;color:var(--text-light);line-height:1.7}
+
+  /* THREE STEPS */
+  .step-list{display:flex;flex-direction:column;gap:10px}
+  .step-item{display:flex;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow-xs);transition:box-shadow .2s,transform .2s}
+  .step-item:hover{box-shadow:var(--shadow-md);transform:translateX(2px)}
+  .step-item .si{flex-shrink:0;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff}
+  .step-item:nth-child(1) .si{background:var(--accent)}
+  .step-item:nth-child(2) .si{background:var(--amber)}
+  .step-item:nth-child(3) .si{background:var(--blue)}
+  .step-item .si-text{flex:1;font-size:14px;color:var(--text-mid);line-height:1.65}
+
+  /* STOP SIGNS */
+  .stop-list{display:flex;flex-direction:column;gap:8px}
+  .stop-item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;box-shadow:var(--shadow-xs)}
+  .stop-item .st{flex-shrink:0;width:24px;height:24px;border-radius:6px;background:#d1fae5;color:#059669;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+  .stop-item p{font-size:14px;color:var(--text-mid);line-height:1.5}
+
+  /* HIGHLIGHT */
+  .hl-box{margin-top:14px;text-align:center;font-size:14px;color:var(--text-mid);padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid #b2ece8;line-height:1.7}
+
+  /* SUMMARY */
+  .summary-cta{background:var(--accent-grad);border-radius:var(--radius-lg);padding:40px 36px;text-align:center;color:#fff;box-shadow:var(--shadow-lg);margin-top:40px;position:relative;overflow:hidden}
+  .summary-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%),radial-gradient(circle at 75% 65%,rgba(255,255,255,.04) 0%,transparent 50%)}
+  .summary-cta h2{font-size:18px;font-weight:750;opacity:.9;margin-bottom:14px;position:relative;z-index:1}
+  .summary-cta p{font-size:15px;font-weight:600;line-height:1.75;position:relative;z-index:1;max-width:600px;margin:0 auto}
+  .tomorrow{text-align:center;margin-top:22px;padding:22px;background:var(--card);border:1px dashed #c8dcd6;border-radius:var(--radius);position:relative;overflow:hidden}
+  .tomorrow::after{content:'';position:absolute;top:-18px;left:-18px;width:70px;height:70px;background:var(--accent-light);border-radius:50%;opacity:.4}
+  .tomorrow .mini-pill{display:inline-block;background:var(--accent-light);color:var(--accent-deep);font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 12px;border-radius:99px;margin-bottom:8px;position:relative;z-index:1}
+  .tomorrow p{font-size:14px;color:var(--text-light);font-weight:500;position:relative;z-index:1}
+  .footer{text-align:center;padding:32px 24px;font-size:12px;color:#b0c8c0;position:relative;z-index:1}
+  @media(max-width:640px){.bd-grid{grid-template-columns:1fr}.hero-section h1{font-size:20px}}
+  @media(min-width:641px) and (max-width:850px){}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="logo-placeholder">质量<br>管理部</div></div>
+
+<div class="container">
+
+  <div class="hero-section">
+    <span class="hero-emoji">🔄</span>
+    <h1>AI 时代最重要的能力之一：快速试错</h1>
+    <p class="sub">AI 大幅降低了低风险任务的试错成本——错得越快，对得越早</p>
+    <span class="core">试得快、改得快、跑得快</span>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 一 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🐢 第一部分</div><h2>传统模式的困境：想清楚再做，但永远想不清楚</h2></div>
+    <p class="text-p">以前做一件事的标准流程是：调研 → 规划 → 审核 → 执行 → 验证。流程走完一轮，可能一周过去了。如果执行后发现方向不对，前面的全部沉没。在这种模式下，"想清楚再做"是生存本能——因为做错的代价太高。</p>
+    <div class="example-box">
+      <p><strong>举例：</strong>你想设计一个"自动生成项目周报"的流程。坐在桌前想了二十分钟——应该包含四个模块，每个模块对应不同数据来源，格式参考上次领导表扬过的那份周报。逻辑通顺，动手写 prompt。跑了一版发现第三个模块定义的数据来源在实际系统中根本拿不到，整个模块得换思路。你花了二十分钟想的东西，跑一次推翻了一半。</p>
+    </div>
+    <p class="text-p"><strong>核心矛盾：需要实际跑起来才能发现问题，但传统模式下跑起来的成本让你不敢轻易跑。</strong>AI 改变了这个等式，至少对于一大类任务来说是这样。</p>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 二 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">⚡ 第二部分</div><h2>AI 改变了什么？大幅降低了低风险任务的试错成本</h2></div>
+    <p class="text-p">以前验证一个想法——"这个 prompt 这样写好不好""这个流程能不能走通"——只能靠经验推测，或者花时间手动跑一轮。现在可以直接试：prompt 写完 30 秒出结果，看一眼好不好，不好立刻改。三分钟能试四五种方案。</p>
+    <p class="text-p">成本大幅降低之后，策略就可以调整了。对于低风险、反馈快的任务，不再是"想得越清楚试得越少"，而是可以"试得越多次想得越清楚"——你在试的过程中看到真实反馈，比空想准得多。</p>
+    <div class="bd-grid">
+      <div class="bd-card green"><h3>适合快速试错</h3><p>写报告、调 prompt、做模板、搭流程框架、整理文档——改坏了可以立刻回退，没有严重后果。</p></div>
+      <div class="bd-card red"><h3>需要慢下来</h3><p>法律合规、安全策略、生产环境操作、对外正式承诺——试错风险高，仍需先想清楚、验证充分再执行。</p></div>
+    </div>
+    <div class="hl-box"><strong>判断标准：</strong>如果这次输出出了错，你能在几秒内发现并回退吗？能，就大胆试；不能，就该慢下来。</div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 三 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🔁 第三部分</div><h2>快速试错的三个动作：试、改、跑</h2></div>
+    <div class="step-list">
+      <div class="step-item"><div class="si">试</div><div class="si-text"><strong>先跑一版出来，不过度准备。</strong>把你的初步想法写两行，让 AI 跑一次。第一版大概率不好，但它的任务就是让你知道哪里不好。看到具体输出，你脑中自然会冒出"这里结构不对""那里少了维度"——这些想法空想时不会出现。</div></div>
+      <div class="step-item"><div class="si">改</div><div class="si-text"><strong>先看方向再调细节，一次只改一个变量。</strong>方向偏差先纠正框架，方向没问题再逐条改细节。格式不对调格式，内容不全补内容——一次一个，才知道哪个改动有效。改完看一眼：能不能一句话说清楚改了什么？说不清楚说明可能一次改了不止一个东西。</div></div>
+      <div class="step-item"><div class="si">跑</div><div class="si-text"><strong>改完立刻再跑，保持高频循环。</strong>不要"等会儿再试"——马上就试。三轮之后输出质量通常天壤之别：第一版勉强能看，第二版结构对了但内容空，第三版可以直接用。而在 AI 帮助下，全程可能只需 5 分钟。</div></div>
+    </div>
+  </div>
+
+  <div class="section-divider"><span class="dot"></span></div>
+
+  <!-- ===== 四 ===== -->
+  <div class="section">
+    <div class="section-hd"><div class="emoji-label">🛑 第四部分</div><h2>什么时候可以停下来？不是无限迭代</h2></div>
+    <div class="stop-list">
+      <div class="stop-item"><span class="st">1</span><p>能改的地方已经很少——剩下的都是风格偏好问题，不影响信息完整性和可用性</p></div>
+      <div class="stop-item"><span class="st">2</span><p>改下去收益递减明显——这轮改了 3 个地方，输出只变好了不到 5%</p></div>
+      <div class="stop-item"><span class="st">3</span><p>这个版本已能满足当前使用需求——可以直接用，不是"再看看能不能更好"</p></div>
+    </div>
+    <div class="hl-box" style="margin-top:14px;"><strong>停止信号：</strong>阻塞问题全部清零，非阻塞问题只剩风格微调时，就可以停了。一个完成的"能用版本"，比一个永远在优化的"半成品"有价值得多。</div>
+  </div>
+
+  <div class="summary-cta">
+    <h2>✅ 一句话总结</h2>
+    <p>AI 大幅降低了低风险任务的试错成本。<strong>核心循环三步：先跑一版看反馈，调整一个变量，调完立刻再跑。</strong>同时记住——低成本不等于零风险，涉及安全、合规、对外承诺的任务，该慢还是要慢。快慢之间的判断，才是真正的能力。</p>
+  </div>
+
+  <div class="tomorrow">
+    <span class="mini-pill">明日预告</span>
+    <p>改完一个地方，要把关联步骤全跑一遍：AI 应用是牵一发动全身，不是改哪里只测哪里</p>
+  </div>
+
+</div>
+
+<footer class="footer">AI 迭代指南 · 质量管理部</footer>
+
+</body>
+</html>
